@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="oval">
+    <solid android:color="#000000" /> <!-- This sets the circle color to black -->
+    <size
+        android:width="10dp"
+        android:height="2dp"/> <!-- This sets the size of the circle -->
+    <stroke
+        android:width="0.5dp"
+        android:color="#000000" /> <!-- This sets the stroke to make the circle look bold -->
+</shape>

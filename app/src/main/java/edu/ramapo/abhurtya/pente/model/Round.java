@@ -3,10 +3,14 @@ package edu.ramapo.abhurtya.pente.model;
 import java.util.List;
 import java.util.Scanner;
 
+import edu.ramapo.abhurtya.pente.utils.Logger;
+
 public class Round {
     private Board board;
     private Player humanPlayer;
     private Player computerPlayer;
+
+    private Logger logger;
     private boolean endRound = false;
     private static Scanner scanner = new Scanner(System.in);
 
@@ -14,7 +18,7 @@ public class Round {
         this.humanPlayer = human;
         this.computerPlayer = computer;
         resetPlayers();
-        this.board = new Board();
+        this.board = new Board(logger);
     }
 
     public Round(Player human, Player computer, Board loadedBoard) {
@@ -31,34 +35,20 @@ public class Round {
         this.humanPlayer.setPoints(0);
         this.computerPlayer.setPoints(0);
     }
-    public char tossHumanComputer() {
-        char firstPlayerSymbol;
-        int call;
-        // Scanner scanner = new Scanner(System.in);
-
-        while (true) {
-            System.out.print("Toss a coin! (1 == heads, 2 == tails): ");
-            call = scanner.nextInt();
-
-            if (call == 1 || call == 2) {
-                break; // Exit the loop if the input is valid
-            } else {
-                System.out.println("Invalid choice. Enter 1 for heads, 2 for tails");
-                scanner.nextLine(); // Consume the newline
-            }
-        }
-
+    public char tossHumanComputer( int userChoice) {
+        // 1 head 2 tails
         int tossResult = (int) (Math.random() * 2) + 1;
-        System.out.println("Coin toss result: " + (tossResult == 1 ? "Heads" : "Tails"));
-
-        firstPlayerSymbol = (tossResult == call) ? 'H' : 'C';
-        System.out.println((firstPlayerSymbol == 'H') ? "You will play first." : "Computer will play first." + "\n");
+        char firstPlayerSymbol = (tossResult == userChoice) ? 'H' : 'C';
 
         return firstPlayerSymbol;
     }
 
     public void displayCaptures() {
         System.out.println("Captures -\t Human: " + humanPlayer.getCaptures() + ",\t Computer: " + computerPlayer.getCaptures());
+    }
+
+    public Board getBoard(){
+        return board;
     }
 
     public void takeTurn(Player currentPlayer, char symbol) {
@@ -93,11 +83,11 @@ public class Round {
         int y = location.getValue();
 
         board.setCell(x, y, symbol);
-        board.displayBoard();
+//        board.displayBoard();
         displayCaptures();
 
         if (checkForCapture(symbol, currentPlayer)) {
-            board.displayBoard();
+//            board.displayBoard();
             displayCaptures();
         }
     }
@@ -222,7 +212,7 @@ public class Round {
     }
 
     public void playGame(Player currentPlayer, char currentSymbol) {
-        board.displayBoard();
+//        board.displayBoard();
 
         do {
             takeTurn(currentPlayer, currentSymbol);
@@ -246,7 +236,7 @@ public class Round {
 
     public Pair<Integer, Integer> play(char firstPlayerSymbol) {
         if (firstPlayerSymbol == ' ') {
-            firstPlayerSymbol = tossHumanComputer();
+            firstPlayerSymbol = tossHumanComputer(1);
         }
         char currentSymbol = 'W'; // The first player plays white stones.
         Player currentPlayer = (firstPlayerSymbol == 'H') ? humanPlayer : computerPlayer;

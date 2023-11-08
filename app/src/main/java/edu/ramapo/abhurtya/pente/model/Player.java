@@ -18,6 +18,8 @@ public abstract class Player {
 
     public abstract void play(Board board, char symbol);
     public abstract Pair<Integer, Integer> getLocation();
+
+    public abstract void setLocation(int x, int y);
     public abstract String getPlayerType();
 
     public int getPoints() {
@@ -145,8 +147,8 @@ public abstract class Player {
         Random rnd = new Random();
         int x, y;
         do {
-            x = rnd.nextInt(19);
-            y = rnd.nextInt(19);
+            x = rnd.nextInt(16);
+            y = rnd.nextInt(16);
         } while (!board.isValidMove(x, y));
         return new Pair<>(x, y);
     }

@@ -21,12 +21,15 @@ public class Computer extends Player {
 
         // Validation done by the strategy
         setLocation(bestMove.getKey(), bestMove.getValue());
+        board.setCell(bestMove.getKey(), bestMove.getValue(), symbol);
     }
 
+    @Override
     public void setLocation(int x, int y) {
         this.location = new Pair<>(x, y);
     }
 
+    @Override
     public Pair<Integer, Integer> getLocation() {
         return location;
     }

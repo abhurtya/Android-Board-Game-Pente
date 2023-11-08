@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.widget.Button;
 import android.widget.ImageView;
 import androidx.appcompat.app.AppCompatActivity;
+import android.os.Handler;
 
 import edu.ramapo.abhurtya.pente.R;
 
@@ -33,14 +34,28 @@ public class CoinTossActivity extends AppCompatActivity {
         animateCoin(new AnimatorListenerAdapter() {
             @Override
             public void onAnimationEnd(Animator animation) {
-                // Animation has ended, now start the next activity
-                Intent startGameIntent = new Intent(CoinTossActivity.this, MainActivity.class);
-                startGameIntent.putExtra("firstPlayerSymbol", (choice == 1) ? 'H' : 'C'); // Pass the choice made by the user
-                startActivity(startGameIntent);
-                finish(); // Finish this activity so it's not in the back stack
+                // Get the result of the coin toss
+                String choiceStr = (choice == 1) ? "heads" : "tails";
+                int tossResult = (int) (Math.random() * 2) + 1;
+
+                String resultStr = (tossResult == 1) ? "heads" : "tails";
+                boolean isHumanStarting = choice == tossResult;
+
+                // Show the result dialog
+                CoinTossResultDialogFragment dialog = CoinTossResultDialogFragment.newInstance(choiceStr, resultStr);
+                dialog.show(getSupportFragmentManager(), "coinTossResult");
+
+                // Start the game after the dialog has been dismissed
+                new Handler().postDelayed(() -> {
+                    Intent startGameIntent = new Intent(CoinTossActivity.this, MainActivity.class);
+                    startGameIntent.putExtra("firstPlayerSymbol", isHumanStarting ? 'H' : 'C');
+                    startActivity(startGameIntent);
+                    finish();
+                }, 3000); // Adjust this value to control how long the dialog is shown
             }
         });
     }
+
 
     private void animateCoin(Animator.AnimatorListener animatorListener) {
         // This example flips the coin around the Y axis 3 times

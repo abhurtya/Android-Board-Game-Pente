@@ -18,6 +18,7 @@ public class Round {
         this.humanPlayer = human;
         this.computerPlayer = computer;
         resetPlayers();
+        this.logger = new Logger();
         this.board = new Board(logger);
     }
 
@@ -27,6 +28,7 @@ public class Round {
         this.humanPlayer.setPoints(0);
         this.computerPlayer.setPoints(0);
         this.board = loadedBoard;
+        this.logger = new Logger();
     }
 
     private void resetPlayers() {
@@ -52,48 +54,31 @@ public class Round {
     }
 
     public void takeTurn(Player currentPlayer, char symbol) {
-        String userInput;
-        System.out.println("\nEnter 'quit' to exit, or 'save' to save game and exit.\nPress any key to continue: ");
-        userInput = scanner.nextLine();
-        System.out.println();
 
-        if (userInput.equals("save")) {
 
-            String nextPlayer = currentPlayer.getPlayerType().equals("Human") ? "Computer" : "Human";
-            //symbol is the current symbol, so must save the opposite symbol
-            String nextPlayerStone = (symbol == 'W') ? "Black" : "White";
-            if (PenteFileWriter.saveGame(board, humanPlayer, computerPlayer, nextPlayer, nextPlayerStone)) {
-                System.out.println("Game saved successfully!");
-                //mark endRound member flag true
-                endRound = true;
 
-                System.exit(0); // Exiting the program
-            } else {
-                System.out.println("Failed to save the game.");
-            }
 
-        } else if (userInput.equals("quit")) {
-            System.out.println("Exited without saving successfully");
-            System.exit(0); // Exiting the program
-        }
-
-        currentPlayer.play(board, symbol);
-        Pair<Integer, Integer> location = currentPlayer.getLocation();
-        int x = location.getKey();
-        int y = location.getValue();
-
-        board.setCell(x, y, symbol);
-//        board.displayBoard();
-        displayCaptures();
-
-        if (checkForCapture(symbol, currentPlayer)) {
-//            board.displayBoard();
-            displayCaptures();
-        }
+//        currentPlayer.play(board, symbol);
+//        Pair<Integer, Integer> location = currentPlayer.getLocation();
+//        int x = location.getKey();
+//        int y = location.getValue();
+//
+//        board.setCell(x, y, symbol);
+////        board.displayBoard();
+//        displayCaptures();
+//
+//        if (checkForCapture(symbol, currentPlayer)) {
+////            board.displayBoard();
+//            displayCaptures();
+//        }
     }
 
-    public boolean checkForEndOfRound() {
-        return endRound;
+    public boolean checkForEndOfRound(Player currentPlayer, char currentSymbol) {
+
+        if (checkForFiveInARow(currentSymbol, currentPlayer) || checkForFiveCaptures(currentPlayer)) {
+            return true;
+        }
+        return false;
     }
 
     public boolean checkForFiveInARow(char symbol, Player currentPlayer) {
@@ -214,17 +199,17 @@ public class Round {
     public void playGame(Player currentPlayer, char currentSymbol) {
 //        board.displayBoard();
 
-        do {
+//        do {
             takeTurn(currentPlayer, currentSymbol);
 
             if (checkForFiveInARow(currentSymbol, currentPlayer) || checkForFiveCaptures(currentPlayer)) {
-                break;
+//                break;
             }
             // Swap current player and symbol
             currentPlayer = (currentPlayer == humanPlayer) ? computerPlayer : humanPlayer;
             currentSymbol = (currentSymbol == 'W') ? 'B' : 'W';
 
-        } while (!checkForEndOfRound());
+//        } while (!checkForEndOfRound());
 
         // We are here means, game has ended
         char opponentSymbol = (currentSymbol == 'W') ? 'B' : 'W';

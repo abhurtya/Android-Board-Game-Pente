@@ -1,3 +1,7 @@
 <resources>
     <string name="app_name">Pente</string>
+    <string name="you_chose">You chose %1$s</string>
+    <string name="coin_result_was">The coin toss result was %1$s</string>
+    <string name="computer_will_start_first">The computer will start first</string>
+    <string name="you_will_start_first">You will start first</string>
 </resources>

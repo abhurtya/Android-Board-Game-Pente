@@ -1,7 +1,7 @@
 package edu.ramapo.abhurtya.pente.controller;
 
 import android.os.Bundle;
-import android.widget.GridLayout;
+import android.widget.Toast ;
 import androidx.appcompat.app.AppCompatActivity;
 
 import edu.ramapo.abhurtya.pente.R;
@@ -32,46 +32,83 @@ public class MainActivity extends AppCompatActivity implements BoardView.BoardVi
 
         round = new Round(humanPlayer, computerPlayer);
 
-        currentSymbol = round.tossHumanComputer(1);
+        currentSymbol = 'W';
 
         // Get the coin toss result from the intent
         char firstPlayerSymbol = getIntent().getCharExtra("firstPlayerSymbol", 'H'); // Default to 'H'
         isHumanTurn = firstPlayerSymbol == 'H';
 
-        Log.d("MainActivity", "First player symbol: " + firstPlayerSymbol);
         boardView = new BoardView(findViewById(R.id.gridLayout_game_board), this, round.getBoard());
         boardView.setBoardViewListener(this);
         boardView.createBoard();
 
-        //If the computer start first, trigger computer's turn
+        startGame();
+
+    }
+
+    private void startGame() {
         if (!isHumanTurn) {
-            computerTurn();
+            makeComputerMove();
+        }
+    }
+
+    private void makeComputerMove() {
+        computerPlayer.play(round.getBoard(), currentSymbol);
+        updateGameState(computerPlayer);
+    }
+
+    private void updateGameState(Player player) {
+        // Update the board
+        round.getBoard().setCell(player.getLocation().getKey(), player.getLocation().getValue(), currentSymbol);
+
+        // Check for captures or wins
+        boolean captureMade = round.checkForCapture(currentSymbol, player);
+        if (captureMade) {
+            round.displayCaptures();
+        }
+        boolean won = round.checkForFiveInARow(currentSymbol, player) || round.checkForFiveCaptures(player);
+        if (won) {
+            Toast.makeText(this, player.getPlayerType() + " wins!", Toast.LENGTH_LONG).show();
+            finishGame();
+            return;
         }
 
-    }
-
-    private void computerTurn() {
-        // Here you will implement the logic for the computer's turn
-        // Once the computer's turn is over, set isHumanTurn to true
-        // You may need to implement an AI or some kind of automated decision-making for the computer's moves
-
-        // After the computer has made its move, refresh the board
+        // Refresh the board view
         boardView.refreshBoard();
 
-        // If the game isn't over, it becomes the human's turn again
-        isHumanTurn = true;
+        // Switch turns
+        swapTurns();
     }
+
+    private void swapTurns() {
+        currentSymbol = (currentSymbol == 'W') ? 'B' : 'W';
+        isHumanTurn = !isHumanTurn;
+
+        // If it's the computer's turn, make a move
+        if (!isHumanTurn) {
+            makeComputerMove();
+        }
+    }
+
+    private void finishGame() {
+        // End the round and maybe prompt for a new game or exit
+        // Here, we just show a toast and exit the activity for simplicity
+        Toast.makeText(this, "Game Over", Toast.LENGTH_SHORT).show();
+        finish(); // Ends the current activity
+    }
+
 
     // Implement the onCellClicked method from the BoardViewListener interface
     @Override
     public void onCellClicked(int row, int col) {
-        // Here the controller interacts with the model and updates the view accordingly
-        char currentPlayer = 'B'; // or 'W', determine the current player logic
-        boolean placed = round.getBoard().setCell(row, col, currentPlayer);
-        if (placed) {
-            // Tell the view to update the cell
-//            boardView.updateCell(row , col, currentPlayer);
-            boardView.refreshBoard();
+
+        if (isHumanTurn) {
+            if (round.getBoard().isValidMove(row, col, currentSymbol)) {
+                humanPlayer.setLocation(row, col);
+                updateGameState(humanPlayer);
+            } else {
+                Toast.makeText(this, "Invalid move", Toast.LENGTH_SHORT).show();
+            }
         }
     }
 

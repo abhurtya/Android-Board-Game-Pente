@@ -48,7 +48,7 @@ public class CoinTossResultDialogFragment extends DialogFragment {
         resultView.setText(getString(R.string.coin_result_was, result));
         firstPlayerView.setText(result.equals(choice) ? R.string.you_will_start_first : R.string.computer_will_start_first);
 
-        // You might want to set a timer to automatically dismiss the dialog after a few seconds
+        // timer to automatically dismiss the dialog after a few seconds
         new Handler().postDelayed(() -> dismiss(), 3000);
 
         return dialog;

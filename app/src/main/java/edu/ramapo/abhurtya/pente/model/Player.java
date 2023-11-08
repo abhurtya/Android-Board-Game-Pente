@@ -147,8 +147,8 @@ public abstract class Player {
         Random rnd = new Random();
         int x, y;
         do {
-            x = rnd.nextInt(16);
-            y = rnd.nextInt(16);
+            x = 2 + rnd.nextInt(15);
+            y = 2 + rnd.nextInt(15);
         } while (!board.isValidMove(x, y));
         return new Pair<>(x, y);
     }

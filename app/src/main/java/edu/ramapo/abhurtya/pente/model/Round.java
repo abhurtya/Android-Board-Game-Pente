@@ -37,6 +37,12 @@ public class Round {
         this.humanPlayer.setPoints(0);
         this.computerPlayer.setPoints(0);
     }
+
+    public void resetRound(){
+        resetPlayers();
+        this.board.resetBoard();
+    }
+
     public char tossHumanComputer( int userChoice) {
         // 1 head 2 tails
         int tossResult = (int) (Math.random() * 2) + 1;
@@ -45,41 +51,11 @@ public class Round {
         return firstPlayerSymbol;
     }
 
-    public void displayCaptures() {
-        System.out.println("Captures -\t Human: " + humanPlayer.getCaptures() + ",\t Computer: " + computerPlayer.getCaptures());
-    }
 
     public Board getBoard(){
         return board;
     }
 
-    public void takeTurn(Player currentPlayer, char symbol) {
-
-
-
-
-//        currentPlayer.play(board, symbol);
-//        Pair<Integer, Integer> location = currentPlayer.getLocation();
-//        int x = location.getKey();
-//        int y = location.getValue();
-//
-//        board.setCell(x, y, symbol);
-////        board.displayBoard();
-//        displayCaptures();
-//
-//        if (checkForCapture(symbol, currentPlayer)) {
-////            board.displayBoard();
-//            displayCaptures();
-//        }
-    }
-
-    public boolean checkForEndOfRound(Player currentPlayer, char currentSymbol) {
-
-        if (checkForFiveInARow(currentSymbol, currentPlayer) || checkForFiveCaptures(currentPlayer)) {
-            return true;
-        }
-        return false;
-    }
 
     public boolean checkForFiveInARow(char symbol, Player currentPlayer) {
         Pair<Integer, Integer> lastMove = currentPlayer.getLocation();
@@ -196,28 +172,6 @@ public class Round {
         player.addPoints(fourInARowPoints);
     }
 
-    public void playGame(Player currentPlayer, char currentSymbol) {
-//        board.displayBoard();
-
-//        do {
-            takeTurn(currentPlayer, currentSymbol);
-
-            if (checkForFiveInARow(currentSymbol, currentPlayer) || checkForFiveCaptures(currentPlayer)) {
-//                break;
-            }
-            // Swap current player and symbol
-            currentPlayer = (currentPlayer == humanPlayer) ? computerPlayer : humanPlayer;
-            currentSymbol = (currentSymbol == 'W') ? 'B' : 'W';
-
-//        } while (!checkForEndOfRound());
-
-        // We are here means, game has ended
-        char opponentSymbol = (currentSymbol == 'W') ? 'B' : 'W';
-        Player opponentPlayer = (currentPlayer == humanPlayer) ? computerPlayer : humanPlayer;
-
-        calculateScore(currentSymbol, currentPlayer);
-        calculateScore(opponentSymbol, opponentPlayer);
-    }
 
     public Pair<Integer, Integer> play(char firstPlayerSymbol) {
         if (firstPlayerSymbol == ' ') {

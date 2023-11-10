@@ -47,10 +47,16 @@ public class CoinTossActivity extends AppCompatActivity {
 
                 // Start the game after the dialog has been dismissed
                 new Handler().postDelayed(() -> {
-                    Intent startGameIntent = new Intent(CoinTossActivity.this, MainActivity.class);
-                    startGameIntent.putExtra("firstPlayerSymbol", isHumanStarting ? 'H' : 'C');
-                    startActivity(startGameIntent);
+//                    Intent startGameIntent = new Intent(CoinTossActivity.this, MainActivity.class);
+//                    startGameIntent.putExtra("firstPlayerSymbol", isHumanStarting ? 'H' : 'C');
+//                    startActivity(startGameIntent);
+//                    finish();
+
+                    Intent resultIntent = new Intent();
+                    resultIntent.putExtra("firstPlayerSymbol", isHumanStarting ? 'H' : 'C');
+                    setResult(RESULT_OK, resultIntent);  // Set the result with the chosen symbol
                     finish();
+
                 }, 3000); // Adjust this value to control how long the dialog is shown
             }
         });

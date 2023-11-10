@@ -5,6 +5,8 @@ import java.util.Scanner;
 public class Tournament {
     private Player human;
     private Player computer;
+
+    private Round currentRound;
     private int totalHumanPoints;
     private int totalComputerPoints;
 
@@ -15,10 +17,18 @@ public class Tournament {
         this.totalComputerPoints = 0;
     }
 
+    public int getTotalHumanPoints() {
+        return this.totalHumanPoints;
+    }
+
+    public int getTotalComputerPoints() {
+        return this.totalComputerPoints;
+    }
+
     public void startGame() {
-        do {
+//        do {
             playRound(human, computer, null, "", ' ');
-        } while (askUserPlay());
+//        } while (askUserPlay());
         announceTournamentWinner();
     }
 
@@ -33,6 +43,10 @@ public class Tournament {
             playRound(this.human, this.computer, null, "", ' ');
         }
         announceTournamentWinner();
+    }
+
+    public Round getCurrentRound() {
+        return this.currentRound;
     }
 
     private void announceTournamentWinner() {
@@ -67,14 +81,14 @@ public class Tournament {
 
         if (loadedBoard != null) {
             // We're resuming a saved game; continue from where we left off
-            Round round = new Round(human, computer, loadedBoard);
+            currentRound = new Round(human, computer, loadedBoard);
             Player currentPlayer = nextPlayerName.equals("Human") ? human : computer;
-            roundPoints = round.resume(currentPlayer, nextPlayerSymbol);
+            roundPoints = currentRound.resume(currentPlayer, nextPlayerSymbol);
         } else {
-            Round round = new Round(human, computer);
+            currentRound = new Round(human, computer);
             if (this.totalHumanPoints == this.totalComputerPoints) {
                 // By default, it will toss in Round class
-                roundPoints = round.play(' ');
+                roundPoints = currentRound.play(' ');
             } else {
                 char firstPlayerSymbol;
                 if (this.totalHumanPoints > this.totalComputerPoints) {
@@ -84,7 +98,7 @@ public class Tournament {
                     System.out.println("Computer points more, will play first.");
                     firstPlayerSymbol = 'C';
                 }
-                roundPoints = round.play(firstPlayerSymbol);
+                roundPoints = currentRound.play(firstPlayerSymbol);
             }
         }
 

@@ -75,7 +75,7 @@
         tools:layout_conversion_absoluteWidth="88dp" />
 
     <TextView
-        android:id="@+id/textView_status2"
+        android:id="@+id/textView_tournament_stats"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="20dp"
@@ -88,7 +88,7 @@
         tools:layout_conversion_absoluteWidth="379dp" />
 
     <TextView
-        android:id="@+id/textView_status3"
+        android:id="@+id/textView_round_stats"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
@@ -99,5 +99,25 @@
         app:layout_constraintTop_toTopOf="parent"
         tools:layout_conversion_absoluteHeight="46dp"
         tools:layout_conversion_absoluteWidth="379dp" />
+
+    <TextView
+        android:id="@+id/textView_human_round_stats"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:layout_marginEnd="16dp"
+        android:text="Human: 0 Points, 0 Captures"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView_round_stats" />
+
+    <TextView
+        android:id="@+id/textView_computer_round_stats"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="4dp"
+        android:text="Computer: 0 Points, 0 Captures"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView_human_round_stats" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -11,9 +11,12 @@ public abstract class Player {
     private int points;
     private int captures;
 
+    private char symbol;
+
     public Player() {
         this.points = 0;
         this.captures = 0;
+        this.symbol = '*';
     }
 
     public abstract void play(Board board, char symbol);
@@ -21,6 +24,14 @@ public abstract class Player {
 
     public abstract void setLocation(int x, int y);
     public abstract String getPlayerType();
+
+    public void setSymbol(char symbol) {
+        this.symbol = symbol;
+    }
+
+    public char getSymbol() {
+        return this.symbol;
+    }
 
     public int getPoints() {
         return points;

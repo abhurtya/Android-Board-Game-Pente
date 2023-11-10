@@ -72,6 +72,12 @@ public class Board {
         return ' ';
     }
 
+    public void resetBoard(){
+        for (char[] row : grid) {
+            Arrays.fill(row, '*');
+        }
+    }
+
     public int checkFirstMoveSecondMove(char symbol) {
         int count = 0;
         for (char[] row : grid) {

@@ -10,7 +10,6 @@ public class Round {
     private Player humanPlayer;
     private Player computerPlayer;
 
-    private Logger logger;
     private boolean endRound = false;
     private static Scanner scanner = new Scanner(System.in);
 
@@ -18,8 +17,7 @@ public class Round {
         this.humanPlayer = human;
         this.computerPlayer = computer;
         resetPlayers();
-        this.logger = new Logger();
-        this.board = new Board(logger);
+        this.board = new Board();
     }
 
     public Round(Player human, Player computer, Board loadedBoard) {
@@ -28,7 +26,6 @@ public class Round {
         this.humanPlayer.setPoints(0);
         this.computerPlayer.setPoints(0);
         this.board = loadedBoard;
-        this.logger = new Logger();
     }
 
     private void resetPlayers() {
@@ -173,22 +170,22 @@ public class Round {
     }
 
 
-    public Pair<Integer, Integer> play(char firstPlayerSymbol) {
-        if (firstPlayerSymbol == ' ') {
-            firstPlayerSymbol = tossHumanComputer(1);
-        }
-        char currentSymbol = 'W'; // The first player plays white stones.
-        Player currentPlayer = (firstPlayerSymbol == 'H') ? humanPlayer : computerPlayer;
+//    public Pair<Integer, Integer> play(char firstPlayerSymbol) {
+//        if (firstPlayerSymbol == ' ') {
+//            firstPlayerSymbol = tossHumanComputer(1);
+//        }
+//        char currentSymbol = 'W'; // The first player plays white stones.
+//        Player currentPlayer = (firstPlayerSymbol == 'H') ? humanPlayer : computerPlayer;
+//
+//        playGame(currentPlayer, currentSymbol);
+//
+//        return new Pair<>(humanPlayer.getPoints(), computerPlayer.getPoints());
+//    }
 
-        playGame(currentPlayer, currentSymbol);
-
-        return new Pair<>(humanPlayer.getPoints(), computerPlayer.getPoints());
-    }
-
-    public Pair<Integer, Integer> resume(Player currentPlayer, char currentSymbol) {
-        playGame(currentPlayer, currentSymbol);
-
-        return new Pair<>(humanPlayer.getPoints(), computerPlayer.getPoints());
-    }
+//    public Pair<Integer, Integer> resume(Player currentPlayer, char currentSymbol) {
+//        playGame(currentPlayer, currentSymbol);
+//
+//        return new Pair<>(humanPlayer.getPoints(), computerPlayer.getPoints());
+//    }
 
 }

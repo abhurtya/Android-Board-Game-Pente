@@ -3,15 +3,11 @@ package edu.ramapo.abhurtya.pente.model;
 import java.util.Arrays;
 import edu.ramapo.abhurtya.pente.utils.Logger;
 
-
-
 public class Board {
 
     private char[][] grid;
-    private Logger logger;
 
-    public Board(Logger logger) {
-        this.logger = logger;
+    public Board() {
         grid = new char[19][19];
         for (char[] row : grid) {
             Arrays.fill(row, '*');
@@ -24,25 +20,25 @@ public class Board {
 
     public boolean isValidMove(int x, int y, char symbol) {
         if (x < 0 || x >= 19 || y < 0 || y >= 19) {
-            logger.addLog("Invalid position");
+            Logger.getInstance().addLog("Invalid position");
             return false;
         }
 
         if (!isCellEmpty(x, y)) {
-            logger.addLog("Cell already occupied");
+            Logger.getInstance().addLog("Cell already occupied");
             return false;
         }
 
         if (symbol == 'W' && checkFirstMoveSecondMove('W') == 0) {
             if (!(x == 9 && y == 9)) {
-                logger.addLog("First white move must be at J10");
+                Logger.getInstance().addLog("First white move must be at J10");
                 return false;
             }
         }
 
         if (symbol == 'W' && checkFirstMoveSecondMove('W') == 1) {
             if (!(Math.abs(x - 9) > 3 || Math.abs(y - 9) > 3)) {
-                logger.addLog("Second white move must be 3 steps away from J10");
+                Logger.getInstance().addLog("Second white move must be 3 steps away from J10");
                 return false;
             }
         }
@@ -57,7 +53,7 @@ public class Board {
 
     public boolean setCell(int x, int y, char symbol) {
         if (x < 0 || x >= 19 || y < 0 || y >= 19) {
-            logger.addLog("Error: Invalid position for setCell.");
+            Logger.getInstance().addLog("Error: Invalid position for setCell.");
             return false;
         }
 
@@ -114,7 +110,7 @@ public class Board {
             setCell(x + 2 * dx, y + 2 * dy, '*');
 
             // Converting into human representation
-            logger.addLog("\n*******  Pairs Captured   ******  " + (char) ('A' + (y + dy)) + (x + dx + 1) + " and " + (char) ('A' + (y + 2 * dy)) + (x + 2 * dx + 1) + "!\n");
+            Logger.getInstance().addLog("\n*******  Pairs Captured   ******  " + (char) ('A' + (y + dy)) + (x + dx + 1) + " and " + (char) ('A' + (y + 2 * dy)) + (x + 2 * dx + 1) + "!\n");
 
             return true;
         }

@@ -4,6 +4,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 
+import edu.ramapo.abhurtya.pente.utils.Logger;
+
 
 
 public abstract class Player {
@@ -58,26 +60,28 @@ public abstract class Player {
     }
 
     public Pair<Integer, Integer> strategy(Board board, char symbol) {
+        Pair<Integer, Integer> bestMove;
         // Strategy for first and second moves
         if (board.checkFirstMoveSecondMove(symbol) == 0 && symbol == 'W') {
-            System.out.println("used strategy firstmove");
+            Logger.getInstance().addLog("Computer used first move at J10");
             return firstMoveStrategy();
         } else if (board.checkFirstMoveSecondMove(symbol) == 1 && symbol == 'W' && board.getCell(9, 9) == 'W') {
-            System.out.println("used strategy second move");
-            return secondMoveStrategy(board);
+            bestMove = secondMoveStrategy(board);
+            //convert to string like 9,9 to J10
+            Logger.getInstance().addLog("Computer used second move at "+ (char)(bestMove.getValue()+65) + (bestMove.getKey()+1));
+            return bestMove;
         }
 
-        Pair<Integer, Integer> bestMove = findBestStrategy(board, symbol);
+        bestMove = findBestStrategy(board, symbol);
         if (isMoveOk(bestMove)) {
             return bestMove;
         }
 
-        bestMove = defaultStrategy(board, symbol);
-        if (isMoveOk(bestMove)) {
-            return bestMove;
-        }
+        //base case
+        bestMove = randomStrategy(board);
+        Logger.getInstance().addLog("Computer played at "+ (char)(bestMove.getValue()+65) + (19-bestMove.getKey()) +" to make a random Move");
 
-        return randomStrategy(board);
+        return bestMove;
     }
 
     private Pair<Integer, Integer> findBestStrategy(Board board, char symbol) {
@@ -85,41 +89,46 @@ public abstract class Player {
 
         bestMove = fiveRowStrategy(board, symbol);
         if (isMoveOk(bestMove)) {
-            System.out.println("Strategy: Make a winning row of 5");
+            Logger.getInstance().addLog("Computer played at " + (char)(bestMove.getValue()+65) + (19-bestMove.getKey()) + " to make 5 in a row");
             return bestMove;
         }
 
         bestMove = blockFiveRowStrategy(board, symbol);
         if (isMoveOk(bestMove)) {
-            System.out.println("Strategy: Block Opponent's 5 in a row win");
+            Logger.getInstance().addLog("Computer played at "+ (char)(bestMove.getValue()+65) + (19-bestMove.getKey()) +" to block Opponent's 5 in a row win");
             return bestMove;
         }
 
         bestMove = blockCaptureStrategy(board, symbol);
         if (isMoveOk(bestMove)) {
-            System.out.println("Strategy: Defend Against Capture");
+            Logger.getInstance().addLog("Computer played at "+ (char)(bestMove.getValue()+65) + (19-bestMove.getKey()) +" to block Opponent's Capture");
             return bestMove;
         }
 
         bestMove = checkCaptureStrategy(board, symbol);
         if (isMoveOk(bestMove)) {
-            System.out.println("Strategy: Capture Opponent's Stones");
+            Logger.getInstance().addLog("Computer played at "+ (char)(bestMove.getValue()+65) + (19-bestMove.getKey()) +" to capture Opponent's Stone");
             return bestMove;
         }
 
         bestMove = snakeStrategy(board, symbol);
         if (isMoveOk(bestMove)) {
-            System.out.println("Strategy: Form a Chain of Stones");
+            Logger.getInstance().addLog("Computer played at "+ (char)(bestMove.getValue()+65) + (19-bestMove.getKey()) +" to make Continuous Chain");
             return bestMove;
         }
 
         bestMove = blockSnakeStrategy(board, symbol);
         if (isMoveOk(bestMove)) {
-            System.out.println("Strategy: Block Opponent's Chain");
+            Logger.getInstance().addLog("Computer played at "+ (char)(bestMove.getValue()+65) + (19-bestMove.getKey()) +" to block Opponent's Continuous Chain");
             return bestMove;
         }
 
-        System.out.println("Strategy: (Default strategy)");
+        bestMove = defaultStrategy(board, symbol);
+        if (isMoveOk(bestMove)) {
+            Logger.getInstance().addLog("Computer played at " + (char)(bestMove.getValue()+65) + (19- bestMove.getKey()) + " next to its own stone");
+            return bestMove;
+        }
+
         return bestMove; // Default to random strategy
     }
 

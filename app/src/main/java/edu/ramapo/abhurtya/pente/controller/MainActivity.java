@@ -12,6 +12,7 @@ import androidx.activity.result.ActivityResult;
 import android.content.DialogInterface;
 import androidx.appcompat.app.AlertDialog;
 import android.os.Handler;
+import android.widget.TextView;
 
 import edu.ramapo.abhurtya.pente.R;
 import edu.ramapo.abhurtya.pente.model.Player;
@@ -19,6 +20,7 @@ import edu.ramapo.abhurtya.pente.model.Computer;
 import edu.ramapo.abhurtya.pente.model.Human;
 import edu.ramapo.abhurtya.pente.model.Round;
 import edu.ramapo.abhurtya.pente.view.BoardView;
+import edu.ramapo.abhurtya.pente.utils.Logger;
 import android.util.Log;
 
 public class MainActivity extends AppCompatActivity implements BoardView.BoardViewListener {
@@ -28,10 +30,20 @@ public class MainActivity extends AppCompatActivity implements BoardView.BoardVi
     private Player humanPlayer;
     private Player computerPlayer;
 
+    private TextView logTextView;
     private boolean isHumanTurn;
     private int humanTournamentScore =0;
     private int computerTournamentScore =0;
     private int roundNumber = 0;
+
+    private Handler handler = new Handler();
+    private Runnable updateLogsRunnable = new Runnable() {
+        @Override
+        public void run() {
+            updateLogDisplay();
+            handler.postDelayed(this, 2000); // Schedule this runnable again after 2 seconds
+        }
+    };
 
     private ActivityResultLauncher<Intent> coinTossResultLauncher = registerForActivityResult(
             new ActivityResultContracts.StartActivityForResult(),
@@ -66,14 +78,22 @@ public class MainActivity extends AppCompatActivity implements BoardView.BoardVi
         boardView.createBoard();
         startNewRound();
 
+        Logger.getInstance().clearLogs();
+        logTextView = findViewById(R.id.logTextView);
+        handler.post(updateLogsRunnable);
+
     }
 
     private void startNewRound(){
         roundNumber++;
+        Logger.getInstance().addLog("----------------------------------------------------");
+        Logger.getInstance().addLog("Round " + roundNumber + " started.");
+        Logger.getInstance().addLog("----------------------------------------------------");
 
         if (roundNumber > 1) {
             round.resetRound();
             boardView.refreshBoard();
+
         }
 
         if (roundNumber == 1 || humanTournamentScore == computerTournamentScore) {
@@ -135,8 +155,6 @@ public class MainActivity extends AppCompatActivity implements BoardView.BoardVi
             return;
         }
 
-
-
         // Switch turns
         swapTurns();
     }
@@ -174,6 +192,7 @@ public class MainActivity extends AppCompatActivity implements BoardView.BoardVi
                 })
                 .setIcon(android.R.drawable.ic_dialog_alert)
                 .show();
+
     }
 
 
@@ -185,6 +204,7 @@ public class MainActivity extends AppCompatActivity implements BoardView.BoardVi
         if (isHumanTurn) {
             if (round.getBoard().isValidMove(row, col, humanPlayer.getSymbol())) {
                 humanPlayer.setLocation(row, col);
+                Logger.getInstance().addLog("You played at " + (char) (col + 'A') + (19 - row ) + ".");
                 updateGameState(humanPlayer, humanPlayer.getSymbol());
             } else {
                 Toast.makeText(this, "Invalid move", Toast.LENGTH_SHORT).show();
@@ -219,7 +239,16 @@ public class MainActivity extends AppCompatActivity implements BoardView.BoardVi
         }, seconds * 1000); //  milliseconds
     }
 
+    private void updateLogDisplay() {
+        String logs = Logger.getInstance().showLogs();
+        logTextView.setText(logs);
+    }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        handler.removeCallbacks(updateLogsRunnable); // Stop the runnable when the activity is destroyed
+    }
 
 
 

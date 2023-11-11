@@ -25,25 +25,25 @@ public class Tournament {
         return this.totalComputerPoints;
     }
 
-    public void startGame() {
-//        do {
-            playRound(human, computer, null, "", ' ');
-//        } while (askUserPlay());
-        announceTournamentWinner();
-    }
+//    public void startGame() {
+////        do {
+//            playRound(human, computer, null, "", ' ');
+////        } while (askUserPlay());
+//        announceTournamentWinner();
+//    }
 
-    public void resumeGame(Board loadedBoard, Player human, Player computer, String nextPlayerName, char nextPlayerSymbol) {
-        this.totalHumanPoints = human.getPoints();
-        this.totalComputerPoints = computer.getPoints();
-        System.out.println("Total tournament Score:\t Human " + this.totalHumanPoints + " - " + this.totalComputerPoints + " Computer");
-        System.out.println("Next Player: " + nextPlayerName + "\t Playing Symbol: " + nextPlayerSymbol);
-
-        playRound(human, computer, loadedBoard, nextPlayerName, nextPlayerSymbol);
-        while (askUserPlay()) {
-            playRound(this.human, this.computer, null, "", ' ');
-        }
-        announceTournamentWinner();
-    }
+//    public void resumeGame(Board loadedBoard, Player human, Player computer, String nextPlayerName, char nextPlayerSymbol) {
+//        this.totalHumanPoints = human.getPoints();
+//        this.totalComputerPoints = computer.getPoints();
+//        System.out.println("Total tournament Score:\t Human " + this.totalHumanPoints + " - " + this.totalComputerPoints + " Computer");
+//        System.out.println("Next Player: " + nextPlayerName + "\t Playing Symbol: " + nextPlayerSymbol);
+//
+//        playRound(human, computer, loadedBoard, nextPlayerName, nextPlayerSymbol);
+//        while (askUserPlay()) {
+//            playRound(this.human, this.computer, null, "", ' ');
+//        }
+//        announceTournamentWinner();
+//    }
 
     public Round getCurrentRound() {
         return this.currentRound;
@@ -75,38 +75,38 @@ public class Tournament {
         return (continuePlaying == 'y' || continuePlaying == 'Y');
     }
 
-    private void playRound(Player human, Player computer, Board loadedBoard, String nextPlayerName, char nextPlayerSymbol) {
-
-        Pair<Integer, Integer> roundPoints;
-
-        if (loadedBoard != null) {
-            // We're resuming a saved game; continue from where we left off
-            currentRound = new Round(human, computer, loadedBoard);
-            Player currentPlayer = nextPlayerName.equals("Human") ? human : computer;
-            roundPoints = currentRound.resume(currentPlayer, nextPlayerSymbol);
-        } else {
-            currentRound = new Round(human, computer);
-            if (this.totalHumanPoints == this.totalComputerPoints) {
-                // By default, it will toss in Round class
-                roundPoints = currentRound.play(' ');
-            } else {
-                char firstPlayerSymbol;
-                if (this.totalHumanPoints > this.totalComputerPoints) {
-                    System.out.println("Human points more, will play first.");
-                    firstPlayerSymbol = 'H';
-                } else {
-                    System.out.println("Computer points more, will play first.");
-                    firstPlayerSymbol = 'C';
-                }
-                roundPoints = currentRound.play(firstPlayerSymbol);
-            }
-        }
-
-        this.totalHumanPoints += roundPoints.getKey();
-        this.totalComputerPoints += roundPoints.getValue();
-
-        System.out.println("Points this round: \tHuman " + roundPoints.getKey() + " - " + roundPoints.getValue() + " Computer");
-        System.out.println("Total tournament Score:\t Human " + this.totalHumanPoints + " - " + this.totalComputerPoints + " Computer");
-    }
+//    private void playRound(Player human, Player computer, Board loadedBoard, String nextPlayerName, char nextPlayerSymbol) {
+//
+//        Pair<Integer, Integer> roundPoints;
+//
+//        if (loadedBoard != null) {
+//            // We're resuming a saved game; continue from where we left off
+//            currentRound = new Round(human, computer, loadedBoard);
+//            Player currentPlayer = nextPlayerName.equals("Human") ? human : computer;
+//            roundPoints = currentRound.resume(currentPlayer, nextPlayerSymbol);
+//        } else {
+//            currentRound = new Round(human, computer);
+//            if (this.totalHumanPoints == this.totalComputerPoints) {
+//                // By default, it will toss in Round class
+//                roundPoints = currentRound.play(' ');
+//            } else {
+//                char firstPlayerSymbol;
+//                if (this.totalHumanPoints > this.totalComputerPoints) {
+//                    System.out.println("Human points more, will play first.");
+//                    firstPlayerSymbol = 'H';
+//                } else {
+//                    System.out.println("Computer points more, will play first.");
+//                    firstPlayerSymbol = 'C';
+//                }
+//                roundPoints = currentRound.play(firstPlayerSymbol);
+//            }
+//        }
+//
+//        this.totalHumanPoints += roundPoints.getKey();
+//        this.totalComputerPoints += roundPoints.getValue();
+//
+//        System.out.println("Points this round: \tHuman " + roundPoints.getKey() + " - " + roundPoints.getValue() + " Computer");
+//        System.out.println("Total tournament Score:\t Human " + this.totalHumanPoints + " - " + this.totalComputerPoints + " Computer");
+//    }
 
 }

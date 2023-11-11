@@ -4,10 +4,20 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Logger {
+    private static Logger instance; // Singleton instance
     private List<String> logList;
 
-    public Logger() {
+    // Private constructor
+    private Logger() {
         logList = new ArrayList<>();
+    }
+
+    // Public method to get the instance
+    public static synchronized Logger getInstance() {
+        if (instance == null) {
+            instance = new Logger();
+        }
+        return instance;
     }
 
     // Adds a log entry
@@ -23,11 +33,12 @@ public class Logger {
     // Returns all logs as a String
     public String showLogs() {
         StringBuilder logs = new StringBuilder();
-        for (String log : logList) {
-            logs.append(log).append("\n");
+        for (int i = logList.size() - 1; i >= 0; i--) {
+            logs.append(logList.get(i)).append("\n");
         }
         return logs.toString();
     }
+
 
     // Returns the last log entry, or null if no logs are present
     public String showLastLog() {
@@ -38,13 +49,11 @@ public class Logger {
     }
 
     // This will write all logs to a file
-//    public void writeLogsToFile(Context context) {
-//        try (FileOutputStream fos = context.openFileOutput("logs.txt", Context.MODE_PRIVATE)) {
-//            fos.write(showLogs().getBytes());
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
-//    }
+    // public void writeLogsToFile(Context context) {
+    //     try (FileOutputStream fos = context.openFileOutput("logs.txt", Context.MODE_PRIVATE)) {
+    //         fos.write(showLogs().getBytes());
+    //     } catch (IOException e) {
+    //         e.printStackTrace();
+    //     }
+    // }
 }
-
-

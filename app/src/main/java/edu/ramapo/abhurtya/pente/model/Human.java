@@ -7,6 +7,7 @@ public class Human extends Player {
     private Pair<Integer, Integer> location;
 
     public Human() {
+
         this.location = new Pair<>(-1, -1);
     }
 

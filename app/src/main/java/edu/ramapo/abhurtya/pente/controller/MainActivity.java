@@ -32,6 +32,11 @@ public class MainActivity extends AppCompatActivity implements BoardView.BoardVi
     private Player computerPlayer;
 
     private TextView logTextView;
+    private TextView humanCapturesTextView;
+    private TextView computerCapturesTextView;
+    private TextView humanTourScoreTextView;
+    private TextView computerTourScoreTextView;
+
     private boolean isHumanTurn;
     private int humanTournamentScore =0;
     private int computerTournamentScore =0;
@@ -76,13 +81,20 @@ public class MainActivity extends AppCompatActivity implements BoardView.BoardVi
         boardView = new BoardView(findViewById(R.id.gridLayout_game_board), this, round.getBoard());
         boardView.setBoardViewListener(this);
 
+
         boardView.createBoard();
-        startNewRound();
+
+        humanCapturesTextView = findViewById(R.id.humanCapturesTextView);
+        computerCapturesTextView = findViewById(R.id.computerCapturesTextView);
+        humanTourScoreTextView = findViewById(R.id.humanTourScoreTextView);
+        computerTourScoreTextView = findViewById(R.id.computerTourScoreTextView);
 
         Logger.getInstance().clearLogs();
         logTextView = findViewById(R.id.logTextView);
-        handler.post(updateLogsRunnable);
 
+        startNewRound();
+
+        handler.post(updateLogsRunnable);
     }
 
     private void startNewRound(){
@@ -96,6 +108,8 @@ public class MainActivity extends AppCompatActivity implements BoardView.BoardVi
             boardView.refreshBoard();
 
         }
+
+        updateCapturesDisplay();
 
         if (roundNumber == 1 || humanTournamentScore == computerTournamentScore) {
             // start the CoinTossActivity
@@ -144,20 +158,31 @@ public class MainActivity extends AppCompatActivity implements BoardView.BoardVi
         boolean captureMade = round.checkForCapture(symbol, player);
         if (captureMade) {
             showTemporaryDialog(player.getPlayerType() + " captured a pair!", 2);
+            updateCapturesDisplay();
         }
 
         // Refresh the board view
         boardView.refreshBoard();
 
-        boolean won = round.checkForFiveInARow(symbol, player) || round.checkForFiveCaptures(player);
-        if (won) {
-            showTemporaryDialog(player.getPlayerType() + " wins!", 2);
+
+        if (round.checkForFiveInARow(symbol, player)) {
+            showTemporaryDialog(player.getPlayerType() + " wins due to five in a row!", 2);
+            finishGame();
+            return;
+        } else if (round.checkForFiveCaptures(player)) {
+            showTemporaryDialog(player.getPlayerType() + " wins due to five captures!", 2);
             finishGame();
             return;
         }
 
         // Switch turns
         swapTurns();
+    }
+
+    private void updateCapturesDisplay() {
+        humanCapturesTextView.setText("Human:" + String.valueOf(humanPlayer.getCaptures()) + " captures");
+        computerCapturesTextView.setText("Computer:" + String.valueOf(computerPlayer.getCaptures()) + " captures");
+
     }
 
     private void swapTurns() {
@@ -176,6 +201,9 @@ public class MainActivity extends AppCompatActivity implements BoardView.BoardVi
 
         humanTournamentScore += humanPlayer.getPoints();
         computerTournamentScore += computerPlayer.getPoints();
+
+        updateTourScoreDisplay();
+
 
         // Show a dialog to ask if the user wants to play again
 //        new AlertDialog.Builder(this)
@@ -203,6 +231,11 @@ public class MainActivity extends AppCompatActivity implements BoardView.BoardVi
             }
         }, 8000); // Delay for 6 seconds
 
+    }
+
+    private void updateTourScoreDisplay() {
+        humanTourScoreTextView.setText("Human: " + String.valueOf(humanTournamentScore) + " points");
+        computerTourScoreTextView.setText("Computer: " + String.valueOf(computerTournamentScore) + " points");
     }
 
 

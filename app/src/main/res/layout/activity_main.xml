@@ -9,6 +9,15 @@
     android:padding="16dp"
     android:weightSum="1">
 
+    <TextView
+        android:id="@+id/humanTourScoreTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:text="Human: 0 Points"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView_tournament_stats" />
+
     <GridLayout
         android:id="@+id/gridLayout_game_board"
         android:layout_width="375dp"
@@ -80,8 +89,6 @@
         android:id="@+id/textView_tournament_stats"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="20dp"
-        android:layout_marginTop="16dp"
         android:gravity="center_horizontal"
         android:text="Tournament Stats"
         app:layout_constraintStart_toStartOf="parent"
@@ -93,8 +100,8 @@
         android:id="@+id/textView_round_stats"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:layout_marginEnd="44dp"
+        android:layout_marginTop="4dp"
+        android:layout_marginEnd="56dp"
         android:gravity="center_horizontal"
         android:text="Round Stats"
         app:layout_constraintEnd_toEndOf="parent"
@@ -103,24 +110,23 @@
         tools:layout_conversion_absoluteWidth="379dp" />
 
     <TextView
-        android:id="@+id/textView_human_round_stats"
+        android:id="@+id/humanCapturesTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="4dp"
         android:layout_marginEnd="16dp"
-        android:text="Human: 0 Points, 0 Captures"
+        android:text="Human: 0 Captures color ."
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView_round_stats" />
 
     <TextView
-        android:id="@+id/textView_computer_round_stats"
+        android:id="@+id/computerCapturesTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="4dp"
-        android:text="Computer: 0 Points, 0 Captures"
+        android:layout_marginTop="4dp"
+        android:text="Computer:0 Captures color ."
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView_human_round_stats" />
+        app:layout_constraintTop_toBottomOf="@+id/humanCapturesTextView" />
 
     <ScrollView
         android:id="@+id/scrollView_log"
@@ -128,11 +134,11 @@
         android:layout_height="0dp"
         android:layout_marginTop="8dp"
         android:background="@drawable/cell_background"
-        app:layout_constraintTop_toBottomOf="@+id/textView_status"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
+        android:padding="8dp"
         app:layout_constraintBottom_toTopOf="@id/button_save"
-        android:padding="8dp">
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView_status">
 
         <TextView
             android:id="@+id/logTextView"
@@ -143,6 +149,14 @@
             tools:text="Log entries will appear here..." />
     </ScrollView>
 
+    <TextView
+        android:id="@+id/computerTourScoreTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:text="Computer:0 Points "
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/humanTourScoreTextView" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

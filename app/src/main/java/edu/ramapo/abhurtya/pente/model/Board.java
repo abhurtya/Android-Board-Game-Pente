@@ -19,32 +19,38 @@ public class Board {
     }
 
     public boolean isValidMove(int x, int y, char symbol) {
-        if (x < 0 || x >= 19 || y < 0 || y >= 19) {
-            Logger.getInstance().addLog("Invalid position");
+        String reason = whyInvalid(x, y, symbol);
+        if (!reason.isEmpty()) {
+//            Logger.getInstance().addLog(reason);
             return false;
+        }
+        return true;
+    }
+
+    public String whyInvalid(int x, int y, char symbol) {
+        if (x < 0 || x >= 19 || y < 0 || y >= 19) {
+            return "Invalid position";
         }
 
         if (!isCellEmpty(x, y)) {
-            Logger.getInstance().addLog("Cell already occupied");
-            return false;
+            return "Cell already occupied";
         }
 
         if (symbol == 'W' && checkFirstMoveSecondMove('W') == 0) {
             if (!(x == 9 && y == 9)) {
-                Logger.getInstance().addLog("First white move must be at J10");
-                return false;
+                return "First white move must be at J10";
             }
         }
 
         if (symbol == 'W' && checkFirstMoveSecondMove('W') == 1) {
             if (!(Math.abs(x - 9) > 3 || Math.abs(y - 9) > 3)) {
-                Logger.getInstance().addLog("Second white move must be 3 steps away from J10");
-                return false;
+                return "Second white move must be 3 steps away from J10";
             }
         }
 
-        return true;
+        return ""; // if move valid
     }
+
 
     // Overloaded method without the symbol argument
     public boolean isValidMove(int x, int y) {

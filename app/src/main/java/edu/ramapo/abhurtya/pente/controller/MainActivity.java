@@ -250,7 +250,9 @@ public class MainActivity extends AppCompatActivity implements BoardView.BoardVi
                 Logger.getInstance().addLog("You played at " + (char) (col + 'A') + (19 - row ) + ".");
                 updateGameState(humanPlayer, humanPlayer.getSymbol());
             } else {
-                Toast.makeText(this, "Invalid move", Toast.LENGTH_SHORT).show();
+                String position = "Oops "+ (char) (col + 'A') + (19 - row )+ ": " ;
+
+                showTemporaryDialog(position+ round.getBoard().whyInvalid(row, col, humanPlayer.getSymbol()), 2);
             }
         }
     }

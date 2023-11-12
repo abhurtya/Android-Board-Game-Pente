@@ -23,6 +23,7 @@
         </activity>
         <activity android:name =".controller.CoinTossActivity"/>
         <activity android:name=".controller.MainActivity" />
+        <activity android:name=".controller.PlayAgainActivity"/>
 
         <meta-data
             android:name="preloaded_fonts"

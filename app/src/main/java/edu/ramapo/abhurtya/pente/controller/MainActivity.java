@@ -13,6 +13,7 @@ import android.content.DialogInterface;
 import androidx.appcompat.app.AlertDialog;
 import android.os.Handler;
 import android.widget.TextView;
+import android.os.Looper;
 
 import edu.ramapo.abhurtya.pente.R;
 import edu.ramapo.abhurtya.pente.model.Player;
@@ -150,7 +151,7 @@ public class MainActivity extends AppCompatActivity implements BoardView.BoardVi
 
         boolean won = round.checkForFiveInARow(symbol, player) || round.checkForFiveCaptures(player);
         if (won) {
-            showTemporaryDialog(player.getPlayerType() + " wins!", 3);
+            showTemporaryDialog(player.getPlayerType() + " wins!", 2);
             finishGame();
             return;
         }
@@ -177,21 +178,30 @@ public class MainActivity extends AppCompatActivity implements BoardView.BoardVi
         computerTournamentScore += computerPlayer.getPoints();
 
         // Show a dialog to ask if the user wants to play again
-        new AlertDialog.Builder(this)
-                .setTitle("Game Over")
-                .setMessage("Play again?")
-                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int which) {
-                        startNewRound(); // Start a new round
-                    }
-                })
-                .setNegativeButton("No", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int which) {
-                        finish(); // Close the activity
-                    }
-                })
-                .setIcon(android.R.drawable.ic_dialog_alert)
-                .show();
+//        new AlertDialog.Builder(this)
+//                .setTitle("Game Over")
+//                .setMessage("Play again?")
+//                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+//                    public void onClick(DialogInterface dialog, int which) {
+//                        startNewRound(); // Start a new round
+//                    }
+//                })
+//                .setNegativeButton("No", new DialogInterface.OnClickListener() {
+//                    public void onClick(DialogInterface dialog, int which) {
+//                        finish(); // Close the activity
+//                    }
+//                })
+//                .setIcon(android.R.drawable.ic_dialog_alert)
+//                .show();
+
+        // Delay starting PlayAgainActivity
+        new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                Intent intent = new Intent(MainActivity.this, PlayAgainActivity.class);
+                startActivityForResult(intent, 1);
+            }
+        }, 8000); // Delay for 6 seconds
 
     }
 
@@ -249,6 +259,20 @@ public class MainActivity extends AppCompatActivity implements BoardView.BoardVi
         super.onDestroy();
         handler.removeCallbacks(updateLogsRunnable); // Stop the runnable when the activity is destroyed
     }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == 1 && resultCode == RESULT_OK) {
+            boolean playAgain = data.getBooleanExtra("playAgain", false);
+            if (playAgain) {
+                startNewRound();
+            } else {
+                finish();
+            }
+        }
+    }
+
 
 
 

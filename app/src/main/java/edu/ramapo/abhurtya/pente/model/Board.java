@@ -116,7 +116,7 @@ public class Board {
             setCell(x + 2 * dx, y + 2 * dy, '*');
 
             // Converting into human representation
-            Logger.getInstance().addLog("\n*******  Pairs Captured   ******  " + (char) ('A' + (y + dy)) + (x + dx + 1) + " and " + (char) ('A' + (y + 2 * dy)) + (x + 2 * dx + 1) + "!\n");
+            Logger.getInstance().addLog("*******  Pairs Captured   ******  " + (char) ('A' + (y + dy)) + (x + dx + 1) + " and " + (char) ('A' + (y + 2 * dy)) + (x + 2 * dx + 1) + "!");
 
             return true;
         }

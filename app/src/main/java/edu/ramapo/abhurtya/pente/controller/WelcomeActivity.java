@@ -15,20 +15,17 @@ public class WelcomeActivity extends AppCompatActivity {
         setContentView(R.layout.activity_welcome);
 
         Button startNewGameButton = findViewById(R.id.button_start_new_game);
-        startNewGameButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(WelcomeActivity.this, MainActivity.class);
-                startActivity(intent);
-            }
+        startNewGameButton.setOnClickListener(v -> {
+            Intent intent = new Intent(WelcomeActivity.this, MainActivity.class);
+            intent.putExtra("isLoadGame", false); // Indicate not to load a game
+            startActivity(intent);
         });
 
         Button loadGameButton = findViewById(R.id.button_load_game);
-        loadGameButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-//                TODO load game
-            }
+        loadGameButton.setOnClickListener(v -> {
+            Intent intent = new Intent(WelcomeActivity.this, MainActivity.class);
+            intent.putExtra("isLoadGame", true); // load game
+            startActivity(intent);
         });
     }
 }

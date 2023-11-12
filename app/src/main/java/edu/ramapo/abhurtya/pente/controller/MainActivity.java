@@ -14,6 +14,12 @@ import androidx.appcompat.app.AlertDialog;
 import android.os.Handler;
 import android.widget.TextView;
 import android.os.Looper;
+import android.net.Uri;
+import java.io.InputStream;
+import java.io.IOException;
+import java.util.Scanner;
+import java.io.FileOutputStream;
+
 
 import edu.ramapo.abhurtya.pente.R;
 import edu.ramapo.abhurtya.pente.model.Player;
@@ -21,6 +27,7 @@ import edu.ramapo.abhurtya.pente.model.Computer;
 import edu.ramapo.abhurtya.pente.model.Human;
 import edu.ramapo.abhurtya.pente.model.Round;
 import edu.ramapo.abhurtya.pente.view.BoardView;
+import edu.ramapo.abhurtya.pente.model.PenteFileReader;
 import edu.ramapo.abhurtya.pente.utils.Logger;
 import android.util.Log;
 
@@ -69,6 +76,24 @@ public class MainActivity extends AppCompatActivity implements BoardView.BoardVi
                 }
             });
 
+    private ActivityResultLauncher<Intent> filePickerLauncher = registerForActivityResult(
+            new ActivityResultContracts.StartActivityForResult(),
+            new ActivityResultCallback<ActivityResult>() {
+                @Override
+                public void onActivityResult(ActivityResult result) {
+                    if (result.getResultCode() == Activity.RESULT_OK) {
+                        Intent data = result.getData();
+                        if (data != null && data.getData() != null) {
+                            Uri uri = data.getData();
+                            // Handle the URI, load the game from the file
+                            loadGameFromFile(uri);
+                        }
+                    }
+                }
+            });
+
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -92,16 +117,51 @@ public class MainActivity extends AppCompatActivity implements BoardView.BoardVi
         Logger.getInstance().clearLogs();
         logTextView = findViewById(R.id.logTextView);
 
-        startNewRound();
+        boolean isLoadGame = getIntent().getBooleanExtra("isLoadGame", false);
+        if (isLoadGame) {
+            launchFilePicker();
+        } else {
+            startNewRound();
+        }
 
         handler.post(updateLogsRunnable);
     }
 
+    private void launchFilePicker() {
+        Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
+        intent.addCategory(Intent.CATEGORY_OPENABLE);
+        //.txt extension only
+        intent.setType("text/plain");
+        filePickerLauncher.launch(intent);
+    }
+
+    private void loadGameFromFile(Uri uri) {
+        try (InputStream inputStream = getContentResolver().openInputStream(uri);
+             Scanner scanner = new Scanner(inputStream)) {
+
+            String[] nextPlayer = new String[1];
+            if (PenteFileReader.loadGameFromScanner(scanner, round.getBoard(), humanPlayer, computerPlayer, nextPlayer)) {
+                isHumanTurn = nextPlayer[0].equals("Human");
+                showTemporaryDialog("Game loaded from file.", 2);
+                boardView.refreshBoard();
+                roundNumber++;
+                //log name of file in Logger
+                Logger.getInstance().addLog("Game loaded from file: " + uri.getLastPathSegment());
+                logRoundNumber(roundNumber);
+                startGame();
+            } else {
+                showTemporaryDialog("Failed to load game from file.", 2);
+            }
+        } catch (IOException e) {
+            Toast.makeText(this, "Error loading file: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+            e.printStackTrace();
+        }
+    }
+
+
     private void startNewRound(){
         roundNumber++;
-        Logger.getInstance().addLog("----------------------------------------------------");
-        Logger.getInstance().addLog("Round " + roundNumber + " started.");
-        Logger.getInstance().addLog("----------------------------------------------------");
+        logRoundNumber(roundNumber);
 
         if (roundNumber > 1) {
             round.resetRound();
@@ -122,9 +182,16 @@ public class MainActivity extends AppCompatActivity implements BoardView.BoardVi
             String dialogMessage = isHumanTurn ? "YOU get to start b/c you have more points."
                     : "Computer starts b/c computer has more points.";
             showTemporaryDialog(dialogMessage, 3);
+            Logger.getInstance().addLog(dialogMessage);
             setPlayerSymbols();
             startGame();
         }
+    }
+
+    private void logRoundNumber(int roundNumber) {
+        Logger.getInstance().addLog("----------------------------------------------------");
+        Logger.getInstance().addLog("Round " + roundNumber + " started.");
+        Logger.getInstance().addLog("----------------------------------------------------");
     }
 
     private void setPlayerSymbols() {
@@ -194,6 +261,25 @@ public class MainActivity extends AppCompatActivity implements BoardView.BoardVi
         }
     }
 
+    private ActivityResultLauncher<Intent> playAgainLauncher = registerForActivityResult(
+            new ActivityResultContracts.StartActivityForResult(),
+            new ActivityResultCallback<ActivityResult>() {
+                @Override
+                public void onActivityResult(ActivityResult result) {
+                    if (result.getResultCode() == Activity.RESULT_OK) {
+                        Intent data = result.getData();
+                        if (data != null) {
+                            boolean playAgain = data.getBooleanExtra("playAgain", false);
+                            if (playAgain) {
+                                startNewRound();
+                            } else {
+                                finish();
+                            }
+                        }
+                    }
+                }
+            });
+
     private void finishGame() {
 
         round.calculateScore(humanPlayer.getSymbol(), humanPlayer);
@@ -204,31 +290,10 @@ public class MainActivity extends AppCompatActivity implements BoardView.BoardVi
 
         updateTourScoreDisplay();
 
-
-        // Show a dialog to ask if the user wants to play again
-//        new AlertDialog.Builder(this)
-//                .setTitle("Game Over")
-//                .setMessage("Play again?")
-//                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-//                    public void onClick(DialogInterface dialog, int which) {
-//                        startNewRound(); // Start a new round
-//                    }
-//                })
-//                .setNegativeButton("No", new DialogInterface.OnClickListener() {
-//                    public void onClick(DialogInterface dialog, int which) {
-//                        finish(); // Close the activity
-//                    }
-//                })
-//                .setIcon(android.R.drawable.ic_dialog_alert)
-//                .show();
-
         // Delay starting PlayAgainActivity
-        new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
-            @Override
-            public void run() {
+        new Handler(Looper.getMainLooper()).postDelayed(() -> {
                 Intent intent = new Intent(MainActivity.this, PlayAgainActivity.class);
-                startActivityForResult(intent, 1);
-            }
+                playAgainLauncher.launch(intent);
         }, 8000); // Delay for 6 seconds
 
     }
@@ -294,22 +359,5 @@ public class MainActivity extends AppCompatActivity implements BoardView.BoardVi
         super.onDestroy();
         handler.removeCallbacks(updateLogsRunnable); // Stop the runnable when the activity is destroyed
     }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == 1 && resultCode == RESULT_OK) {
-            boolean playAgain = data.getBooleanExtra("playAgain", false);
-            if (playAgain) {
-                startNewRound();
-            } else {
-                finish();
-            }
-        }
-    }
-
-
-
-
 
 }

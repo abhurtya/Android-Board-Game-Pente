@@ -12,7 +12,7 @@ public class Computer extends Player implements Serializable {
     @Override
     public void play(Board board, char symbol) {
         // Use the strategy function to get the best move
-        Pair<Integer, Integer> bestMove = strategy(board, symbol);
+        Pair<Integer, Integer> bestMove = strategy(board, symbol, true);
 
         // Convert the numerical coordinates to a human-readable representation
         char column = (char)('A' + bestMove.getValue());

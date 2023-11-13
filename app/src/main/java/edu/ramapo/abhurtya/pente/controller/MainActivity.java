@@ -27,6 +27,7 @@ import java.io.FileOutputStream;
 
 
 import edu.ramapo.abhurtya.pente.R;
+import edu.ramapo.abhurtya.pente.model.Pair;
 import edu.ramapo.abhurtya.pente.model.Player;
 import edu.ramapo.abhurtya.pente.model.Computer;
 import edu.ramapo.abhurtya.pente.model.Human;
@@ -53,6 +54,7 @@ public class MainActivity extends AppCompatActivity implements BoardView.BoardVi
 
     private Button saveButton;
     private Button quitButton;
+    private Button helpButton;
 
     private boolean isHumanTurn;
     private int humanTournamentScore =0;
@@ -125,6 +127,10 @@ public class MainActivity extends AppCompatActivity implements BoardView.BoardVi
         computerTourScoreTextView = findViewById(R.id.computerTourScoreTextView);
         saveButton = findViewById(R.id.button_save);
         saveButton.setOnClickListener(v -> onSaveButtonClicked());
+        quitButton = findViewById(R.id.button_quit);
+        quitButton.setOnClickListener(v -> finish());
+        helpButton = findViewById(R.id.button_help);
+        helpButton.setOnClickListener(v -> onButtonHelpClicked());
 
         Logger.getInstance().clearLogs();
         logTextView = findViewById(R.id.logTextView);
@@ -395,6 +401,14 @@ public class MainActivity extends AppCompatActivity implements BoardView.BoardVi
         intent.putExtra("nextPlayer", isHumanTurn ? "Human" : "Computer");
         intent.putExtra("nextPlayerSymbol", isHumanTurn ? humanPlayer.getSymbol() : computerPlayer.getSymbol());
         startActivity(intent);
+    }
+
+    public void onButtonHelpClicked() {
+        //if button help clicked get computer's strategy move and display it in temporary dialog
+
+        Pair<Integer, Integer> suggestedMove= humanPlayer.strategy(round.getBoard(), humanPlayer.getSymbol(), false);
+        showTemporaryDialog("Suggested move: " + (char) (suggestedMove.getValue() + 'A') + (19 - suggestedMove.getKey()), 2);
+
     }
 
 

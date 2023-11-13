@@ -3,14 +3,12 @@ package edu.ramapo.abhurtya.pente.model;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.Scanner;
+
+import edu.ramapo.abhurtya.pente.utils.Logger;
 
 public class PenteFileWriter {
 
-    public static boolean saveGame(Board board, Player human, Player computer, String nextPlayer, String nextPlayerSymbol) {
-        Scanner input = new Scanner(System.in);
-        System.out.println("Please enter FileName: ");
-        String filename = input.nextLine();
+    public static boolean saveGame(String filename, Board board, Player human, Player computer, String nextPlayer, char nextPlayerSymbol) {
 
         try (PrintWriter outFile = new PrintWriter(new FileWriter(filename))) {
             outFile.println("Board:");
@@ -30,15 +28,13 @@ public class PenteFileWriter {
             outFile.println("Captured pairs: " + computer.getCaptures());
             outFile.println("Score: " + computer.getPoints());
 
-            outFile.println("\nNext Player: " + nextPlayer + " - " + nextPlayerSymbol);
+            String nextPlayerSymbolStr = nextPlayerSymbol == 'W' ? "White" : "Black";
+            outFile.println("\nNext Player: " + nextPlayer + " - " + nextPlayerSymbolStr);
 
             return true;
         } catch (IOException e) {
-            System.out.println("Failed to open file for writing.");
+            Logger.getInstance().addLog("Failed to open file for writing.");
             return false;
-        } finally {
-            // Close the scanner
-            // input.close();
         }
     }
 }

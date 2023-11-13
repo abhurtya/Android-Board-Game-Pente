@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.widget.Button;
 
 import androidx.appcompat.app.AppCompatActivity;
+import android.widget.TextView;
 
 import edu.ramapo.abhurtya.pente.R;
 
@@ -17,6 +18,15 @@ public class PlayAgainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         // Set the content view to your custom layout
         setContentView(R.layout.activity_play_again);
+
+        int humanPoints = getIntent().getIntExtra("humanPoints", 0);
+        int computerPoints = getIntent().getIntExtra("computerPoints", 0);
+
+        TextView humanPointsTextView = findViewById(R.id.human_points_text_view);
+        TextView computerPointsTextView = findViewById(R.id.computer_points_text_view);
+
+        humanPointsTextView.setText("Human Points: " + humanPoints);
+        computerPointsTextView.setText("Computer Points: " + computerPoints);
 
         Button yesButton = findViewById(R.id.yes_button);
         Button noButton = findViewById(R.id.no_button);

@@ -3,12 +3,14 @@ package edu.ramapo.abhurtya.pente.model;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
+import java.io.Serializable;
 
 import edu.ramapo.abhurtya.pente.utils.Logger;
 
 
 
-public abstract class Player {
+
+public abstract class Player implements Serializable {
 
     private int points;
     private int captures;

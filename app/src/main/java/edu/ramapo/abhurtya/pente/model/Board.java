@@ -2,8 +2,9 @@ package edu.ramapo.abhurtya.pente.model;
 
 import java.util.Arrays;
 import edu.ramapo.abhurtya.pente.utils.Logger;
+import java.io.Serializable;
 
-public class Board {
+public class Board implements Serializable {
 
     private char[][] grid;
 

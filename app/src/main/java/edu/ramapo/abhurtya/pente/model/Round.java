@@ -75,7 +75,6 @@ public class Round {
             count += board.countConsecutiveStones(x, y, -dx, -dy, symbol);
 
             if (count >= 5) {
-                System.out.println(currentPlayer.getPlayerType() + " wins!--due to 5 in a row");
                 // 5 points to the player with 5 in a row
                 currentPlayer.addPoints(5);
                 return true;
@@ -123,7 +122,6 @@ public class Round {
 
     public boolean checkForFiveCaptures(Player currentPlayer) {
         if (currentPlayer.getCaptures() >= 5) {
-            System.out.println(currentPlayer.getPlayerType() + " wins!--due to 5 captures of opponent stones");
             return true;
         }
         return false;
@@ -149,7 +147,10 @@ public class Round {
             if (board.captureStones(x, y, dx, dy, symbol)) {
                 capture = true;
                 currentPlayer.addCaptures();
-                System.out.println(currentPlayer.getPlayerType() + " with symbol " + symbol + " captured a pair of " + opponentSymbol + " stones!\n\n");
+
+                String playerColor = (symbol == 'W') ? "White" : "Black";
+                String opponentColor = (symbol == 'W') ? "Black" : "White";
+                Logger.getInstance().addLog(currentPlayer.getPlayerType() + ", " + playerColor + " captured a pair of " + opponentColor + " stones!");
             }
         }
         return capture;

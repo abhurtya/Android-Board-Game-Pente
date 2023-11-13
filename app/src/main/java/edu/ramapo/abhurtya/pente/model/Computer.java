@@ -1,6 +1,7 @@
 package edu.ramapo.abhurtya.pente.model;
+import java.io.Serializable;
 
-public class Computer extends Player {
+public class Computer extends Player implements Serializable {
 
     private Pair<Integer, Integer> location;
 

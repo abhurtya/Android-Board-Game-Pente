@@ -6,7 +6,7 @@ import java.util.Scanner;
 
 import edu.ramapo.abhurtya.pente.utils.Logger;
 
-public class PenteFileReader {
+public class PenteFileReader  {
 
     public static boolean loadGameFromScanner(Scanner scanner, Board board, Player human, Player computer, String[] nextPlayer) {
 

@@ -11,6 +11,10 @@ import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResult;
 import android.content.DialogInterface;
 import androidx.appcompat.app.AlertDialog;
+import android.widget.EditText;
+import android.text.InputType;
+import android.view.View;
+import java.io.File;
 import android.os.Handler;
 import android.widget.TextView;
 import android.os.Looper;
@@ -18,6 +22,7 @@ import android.net.Uri;
 import java.io.InputStream;
 import java.io.IOException;
 import java.util.Scanner;
+import android.widget.Button;
 import java.io.FileOutputStream;
 
 
@@ -28,6 +33,7 @@ import edu.ramapo.abhurtya.pente.model.Human;
 import edu.ramapo.abhurtya.pente.model.Round;
 import edu.ramapo.abhurtya.pente.view.BoardView;
 import edu.ramapo.abhurtya.pente.model.PenteFileReader;
+import edu.ramapo.abhurtya.pente.model.PenteFileWriter;
 import edu.ramapo.abhurtya.pente.utils.Logger;
 import android.util.Log;
 
@@ -43,6 +49,10 @@ public class MainActivity extends AppCompatActivity implements BoardView.BoardVi
     private TextView computerCapturesTextView;
     private TextView humanTourScoreTextView;
     private TextView computerTourScoreTextView;
+    private TextView colorCodeTextView;
+
+    private Button saveButton;
+    private Button quitButton;
 
     private boolean isHumanTurn;
     private int humanTournamentScore =0;
@@ -113,6 +123,8 @@ public class MainActivity extends AppCompatActivity implements BoardView.BoardVi
         computerCapturesTextView = findViewById(R.id.computerCapturesTextView);
         humanTourScoreTextView = findViewById(R.id.humanTourScoreTextView);
         computerTourScoreTextView = findViewById(R.id.computerTourScoreTextView);
+        saveButton = findViewById(R.id.button_save);
+        saveButton.setOnClickListener(v -> onSaveButtonClicked());
 
         Logger.getInstance().clearLogs();
         logTextView = findViewById(R.id.logTextView);
@@ -148,6 +160,7 @@ public class MainActivity extends AppCompatActivity implements BoardView.BoardVi
                 //log name of file in Logger
                 Logger.getInstance().addLog("Game loaded from file: " + uri.getLastPathSegment());
                 logRoundNumber(roundNumber);
+                setColorCode();
                 startGame();
             } else {
                 showTemporaryDialog("Failed to load game from file.", 2);
@@ -202,6 +215,16 @@ public class MainActivity extends AppCompatActivity implements BoardView.BoardVi
             humanPlayer.setSymbol('B');
             computerPlayer.setSymbol('W');
         }
+
+        setColorCode();
+    }
+
+    private void setColorCode(){
+        colorCodeTextView = findViewById(R.id.colorCodeTextView);
+        char humanColor = humanPlayer.getSymbol() == 'W' ? '⚪' : '⚫';
+        char computerColor = computerPlayer.getSymbol() == 'W' ? '⚪' : '⚫';
+
+        colorCodeTextView.setText("   Human: " + humanColor + ", Computer: " + computerColor + "   ");
     }
 
     private void startGame() {
@@ -224,7 +247,8 @@ public class MainActivity extends AppCompatActivity implements BoardView.BoardVi
         // Check for captures or wins
         boolean captureMade = round.checkForCapture(symbol, player);
         if (captureMade) {
-            showTemporaryDialog(player.getPlayerType() + " captured a pair!", 2);
+            String opponentPlayer = player.getPlayerType().equals("Human") ? "Computer" : "Human";
+            showTemporaryDialog(player.getPlayerType() + " captured" +opponentPlayer+  "'s pair!", 2);
             updateCapturesDisplay();
         }
 
@@ -273,6 +297,10 @@ public class MainActivity extends AppCompatActivity implements BoardView.BoardVi
                             if (playAgain) {
                                 startNewRound();
                             } else {
+                                Intent intent = new Intent(MainActivity.this, ShowTournamentSummaryActivity.class);
+                                intent.putExtra("humanPoints", humanTournamentScore);
+                                intent.putExtra("computerPoints", computerTournamentScore);
+                                startActivity(intent);
                                 finish();
                             }
                         }
@@ -293,6 +321,9 @@ public class MainActivity extends AppCompatActivity implements BoardView.BoardVi
         // Delay starting PlayAgainActivity
         new Handler(Looper.getMainLooper()).postDelayed(() -> {
                 Intent intent = new Intent(MainActivity.this, PlayAgainActivity.class);
+            intent.putExtra("humanPoints", humanPlayer.getPoints());
+            intent.putExtra("computerPoints", computerPlayer.getPoints());
+
                 playAgainLauncher.launch(intent);
         }, 8000); // Delay for 6 seconds
 
@@ -315,9 +346,10 @@ public class MainActivity extends AppCompatActivity implements BoardView.BoardVi
                 Logger.getInstance().addLog("You played at " + (char) (col + 'A') + (19 - row ) + ".");
                 updateGameState(humanPlayer, humanPlayer.getSymbol());
             } else {
-                String position = "Oops "+ (char) (col + 'A') + (19 - row )+ ": " ;
+                String invalidReason = "Oops "+ (char) (col + 'A') + (19 - row )+ ": " + round.getBoard().whyInvalid(row, col, humanPlayer.getSymbol() );
 
-                showTemporaryDialog(position+ round.getBoard().whyInvalid(row, col, humanPlayer.getSymbol()), 2);
+                showTemporaryDialog(invalidReason, 2);
+                Logger.getInstance().addLog(invalidReason);
             }
         }
     }
@@ -353,6 +385,18 @@ public class MainActivity extends AppCompatActivity implements BoardView.BoardVi
         String logs = Logger.getInstance().showLogs();
         logTextView.setText(logs);
     }
+
+//    https://stackoverflow.com/questions/768969/passing-a-bundle-on-startactivity
+    public void onSaveButtonClicked() {
+        Intent intent = new Intent(MainActivity.this, SaveGameActivity.class);
+        intent.putExtra("board", round.getBoard());
+        intent.putExtra("humanPlayer", humanPlayer);
+        intent.putExtra("computerPlayer", computerPlayer);
+        intent.putExtra("nextPlayer", isHumanTurn ? "Human" : "Computer");
+        intent.putExtra("nextPlayerSymbol", isHumanTurn ? humanPlayer.getSymbol() : computerPlayer.getSymbol());
+        startActivity(intent);
+    }
+
 
     @Override
     protected void onDestroy() {

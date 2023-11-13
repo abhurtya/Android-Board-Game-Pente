@@ -1,6 +1,8 @@
 package edu.ramapo.abhurtya.pente.model;
 
-public class Pair<K, V> {
+import java.io.Serializable;
+
+public class Pair<K, V> implements Serializable {
 
     private K first;
     private V second;

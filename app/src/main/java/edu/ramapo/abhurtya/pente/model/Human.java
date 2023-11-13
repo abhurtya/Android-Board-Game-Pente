@@ -1,8 +1,10 @@
 package edu.ramapo.abhurtya.pente.model;
 
+import java.io.Serializable;
 import java.util.Scanner;
+import java.io.Serializable;
 
-public class Human extends Player {
+public class Human extends Player implements Serializable {
 
     private Pair<Integer, Integer> location;
 

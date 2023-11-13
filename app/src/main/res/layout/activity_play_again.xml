@@ -7,6 +7,18 @@
     android:background="#88FFFFFF"
     android:padding="16dp">
 
+    <TextView
+        android:id="@+id/text"
+        android:layout_width="148dp"
+        android:layout_height="38dp"
+        android:layout_marginStart="224dp"
+        android:layout_marginTop="284dp"
+        android:fontFamily="@font/paprika"
+        android:text="Play again?"
+        android:textAppearance="@style/TextAppearance.AppCompat.Large"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
     <ImageView
         android:id="@+id/play_again_image"
         android:layout_width="282dp"
@@ -14,30 +26,7 @@
         android:layout_marginTop="8dp"
         android:src="@drawable/ic_lets_go"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.496"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/text" />
-
-    <TextView
-        android:id="@+id/text"
-        android:layout_width="148dp"
-        android:layout_height="38dp"
-        android:layout_marginStart="212dp"
-        android:layout_marginTop="204dp"
-        android:fontFamily="@font/paprika"
-        android:text="Play again?"
-        android:textAppearance="@style/TextAppearance.AppCompat.Large"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <Button
-        android:id="@+id/yes_button"
-        style="@style/Widget.MaterialComponents.Button"
-        android:layout_width="185dp"
-        android:layout_height="47dp"
-        android:layout_marginTop="220dp"
-        android:text="Yes"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.472"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/text" />
 
@@ -46,11 +35,24 @@
         style="@style/Widget.MaterialComponents.Button"
         android:layout_width="185dp"
         android:layout_height="47dp"
-        android:layout_marginStart="96dp"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="20dp"
         android:text="No"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/yes_button" />
+
+    <Button
+        android:id="@+id/yes_button"
+        style="@style/Widget.MaterialComponents.Button"
+        android:layout_width="185dp"
+        android:layout_height="47dp"
+        android:layout_marginTop="204dp"
+        android:text="Yes"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.486"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/text" />
+
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/guideline2"
@@ -58,5 +60,35 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         app:layout_constraintGuide_end="452dp" />
+
+    <TextView
+        android:id="@+id/human_points_text_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        android:fontFamily="@font/paprika"
+        android:text="human round points"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/points_this_round_image" />
+
+    <TextView
+        android:id="@+id/computer_points_text_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        android:layout_marginEnd="28dp"
+        android:fontFamily="@font/paprika"
+        android:text="comp round points"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/points_this_round_image" />
+
+    <ImageView
+        android:id="@+id/points_this_round_image"
+        android:layout_width="374dp"
+        android:layout_height="155dp"
+        android:src="@drawable/image_round_points"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

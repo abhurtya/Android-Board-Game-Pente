@@ -67,12 +67,12 @@ public abstract class Player implements Serializable {
 
         // Strategy for first and second moves
         if (board.checkFirstMoveSecondMove(symbol) == 0 && symbol == 'W') {
-            Logger.getInstance().addLog("Computer used first move at J10");
+            Logger.getInstance().addLog(moveType+ "J10 to make the first move");
             return firstMoveStrategy();
         } else if (board.checkFirstMoveSecondMove(symbol) == 1 && symbol == 'W' && board.getCell(9, 9) == 'W') {
             bestMove = secondMoveStrategy(board);
             //convert to string like 9,9 to J10
-            Logger.getInstance().addLog("Computer used second move at "+ (char)(bestMove.getValue()+65) + (bestMove.getKey()+1));
+            Logger.getInstance().addLog(moveType+ (char)(bestMove.getValue()+65) + (19 - bestMove.getKey()) +" to make the second move");
             return bestMove;
         }
 
@@ -90,7 +90,7 @@ public abstract class Player implements Serializable {
 
     private Pair<Integer, Integer> findBestStrategy(Board board, char symbol , boolean isComputer   ) {
         Pair<Integer, Integer> bestMove;
-        String moveType = isComputer ? "Computer played at" : "AI suggests Human to play at";
+        String moveType = isComputer ? "Computer played at " : "AI suggests Human to play at ";
 
         bestMove = fiveRowStrategy(board, symbol);
         if (isMoveOk(bestMove)) {

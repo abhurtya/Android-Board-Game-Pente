@@ -9,22 +9,20 @@ import edu.ramapo.abhurtya.pente.R;
 import edu.ramapo.abhurtya.pente.model.PenteFileWriter;
 import edu.ramapo.abhurtya.pente.model.Board;
 import edu.ramapo.abhurtya.pente.model.Player;
-
-
-import android.os.Environment;
 import android.widget.Toast;
-import android.Manifest;
-import android.content.pm.PackageManager;
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
-
-import java.io.File;
+import android.provider.MediaStore;
+import android.content.ContentValues;
+import android.os.Build;
+import android.net.Uri;
+import java.io.OutputStream;
+import java.io.BufferedWriter;
+import java.io.OutputStreamWriter;
+import android.os.Environment;
 
 public class SaveGameActivity extends AppCompatActivity {
 
     private EditText filenameEditText;
     private Button saveButton;
-    private static final int PERMISSION_REQUEST_WRITE_EXTERNAL = 1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,37 +32,12 @@ public class SaveGameActivity extends AppCompatActivity {
         filenameEditText = findViewById(R.id.filenameEditText);
         saveButton = findViewById(R.id.saveButton);
 
-        requestStoragePermission();
-
         saveButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (isExternalStorageWritable()) {
-//                    requestStoragePermission();
-                } else {
-                    Toast.makeText(SaveGameActivity.this, "External storage not available", Toast.LENGTH_SHORT).show();
-                }
+                saveGame();
             }
         });
-    }
-
-    private void requestStoragePermission() {
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, PERMISSION_REQUEST_WRITE_EXTERNAL);
-        } else {
-            saveGame();
-        }
-    }
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
-        if (requestCode == PERMISSION_REQUEST_WRITE_EXTERNAL) {
-            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                saveGame();
-            } else {
-                Toast.makeText(this, "Permission denied", Toast.LENGTH_SHORT).show();
-            }
-        }
     }
 
     private void saveGame() {
@@ -74,28 +47,45 @@ public class SaveGameActivity extends AppCompatActivity {
             return;
         }
 
-        File file = new File(Environment.getExternalStorageDirectory(), filename);
+        if (!filename.endsWith(".txt")) {
+            filename += ".txt";
+        }
 
-        // retrieving data:
-         Board board = (Board) getIntent().getSerializableExtra("board");
-         Player humanPlayer = (Player) getIntent().getSerializableExtra("humanPlayer");
-         Player computerPlayer = (Player) getIntent().getSerializableExtra("computerPlayer");
-         String nextPlayer = getIntent().getStringExtra("nextPlayer");
-         char nextPlayerSymbol = getIntent().getCharExtra("nextPlayerSymbol", 'W');
+        try {
+            //help obtained from Github user fiftyonemoon
+            //https://gist.github.com/fiftyonemoon/433b563f652039e32c07d1d629f913fb
+            ContentValues values = new ContentValues();
+            values.put(MediaStore.MediaColumns.DISPLAY_NAME, filename);
+            values.put(MediaStore.MediaColumns.MIME_TYPE, "text/plain");
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                values.put(MediaStore.MediaColumns.RELATIVE_PATH, Environment.DIRECTORY_DOWNLOADS);
+            }
 
+            Uri uri = getContentResolver().insert(MediaStore.Files.getContentUri("external"), values);
+            if (uri != null) {
+                try (OutputStream outputStream = getContentResolver().openOutputStream(uri);
+                     BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(outputStream))) {
 
-         boolean success = PenteFileWriter.saveGame(file.getAbsolutePath(), board, humanPlayer, computerPlayer, nextPlayer, nextPlayerSymbol);
+                    Board board = (Board) getIntent().getSerializableExtra("board");
+                    Player humanPlayer = (Player) getIntent().getSerializableExtra("humanPlayer");
+                    Player computerPlayer = (Player) getIntent().getSerializableExtra("computerPlayer");
+                    String nextPlayer = getIntent().getStringExtra("nextPlayer");
+                    char nextPlayerSymbol = getIntent().getCharExtra("nextPlayerSymbol", 'W');
 
-         if (success) {
-             Toast.makeText(this, "Game saved successfully!", Toast.LENGTH_SHORT).show();
-             finish(); // Close activity after saving
-         } else {
-             Toast.makeText(this, "Failed to save game.", Toast.LENGTH_SHORT).show();
-         }
-    }
+                    boolean success = PenteFileWriter.saveGame(writer, board, humanPlayer, computerPlayer, nextPlayer, nextPlayerSymbol);
 
-    private boolean isExternalStorageWritable() {
-        String state = Environment.getExternalStorageState();
-        return Environment.MEDIA_MOUNTED.equals(state);
+                    if (success) {
+                        Toast.makeText(this, "Game saved successfully to Downloads", Toast.LENGTH_SHORT).show();
+                        finish(); // Close activity after saving
+                    } else {
+                        Toast.makeText(this, "Failed to save game.", Toast.LENGTH_SHORT).show();
+                    }
+                }
+            } else {
+                Toast.makeText(this, "Failed to create file in Downloads", Toast.LENGTH_SHORT).show();
+            }
+        } catch (Exception e) {
+            Toast.makeText(this, "Error saving file: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+        }
     }
 }

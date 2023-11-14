@@ -1,12 +1,15 @@
 package edu.ramapo.abhurtya.pente.view;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.util.Log;
 import android.view.View;
 import android.widget.GridLayout;
 import android.widget.TextView;
 import edu.ramapo.abhurtya.pente.R;
 import edu.ramapo.abhurtya.pente.model.Board;
+import android.graphics.drawable.Drawable;
+import android.os.Handler;
 
 public class BoardView {
 
@@ -21,6 +24,20 @@ public class BoardView {
 
         this.gridLayout.setColumnCount(20);
         this.gridLayout.setRowCount(20);
+    }
+
+    private BoardViewListener listener;
+    public interface BoardViewListener {
+        void onCellClicked(int row, int col);
+    }
+    public void setBoardViewListener(BoardViewListener listener) {
+        this.listener = listener;
+    }
+
+    private void notifyCellClicked(int row, int col) {
+        if (listener != null) {
+            listener.onCellClicked(row, col);
+        }
     }
 
     public void createBoard() {
@@ -55,12 +72,10 @@ public class BoardView {
             char state = board.getCell(row - 1, col - 1);
             switch (state) {
                 case 'W': // white stone
-                    cell.setBackgroundResource(R.drawable.white_stone); // Replace with your white stone drawable
-                    Log.d("yoyo", "did white code");
+                    cell.setBackgroundResource(R.drawable.white_stone);
                     break;
                 case 'B': // a black stone
-                    cell.setBackgroundResource(R.drawable.black_stone); // Replace with your black stone drawable
-                    Log.d("yoyo", "did black code");
+                    cell.setBackgroundResource(R.drawable.black_stone);
                     break;
                 default: // If the cell is empty
                     cell.setBackgroundResource(R.drawable.cell_background);
@@ -120,7 +135,7 @@ public class BoardView {
     }
 
     public void refreshBoard() {
-        // Assuming your board model starts from index 0 and goes to 18 for a 19x19 board
+
         for (int row = 0; row < 19; row++) {
             for (int col = 0; col < 19; col++) {
                 char state = board.getCell(row, col); // Retrieve the state from the model
@@ -129,19 +144,18 @@ public class BoardView {
         }
     }
 
-    private BoardViewListener listener;
-    public interface BoardViewListener {
-        void onCellClicked(int row, int col);
-    }
-    public void setBoardViewListener(BoardViewListener listener) {
-        this.listener = listener;
-    }
+    public void highlightCell(int row, int col, int duration) {
+        int actualRow = row + 1;
+        int actualCol = col + 1;
+        int index = (actualRow * gridLayout.getColumnCount()) + actualCol;
+        View view = gridLayout.getChildAt(index);
 
-    private void notifyCellClicked(int row, int col) {
-        if (listener != null) {
-            listener.onCellClicked(row, col);
+        if (view instanceof TextView) {
+            TextView cellView = (TextView) view;
+            cellView.setBackgroundResource(R.drawable.highlighted_cell);
         }
     }
+
 
     // Helper class to store coordinates in the tag
     private class CellTag {

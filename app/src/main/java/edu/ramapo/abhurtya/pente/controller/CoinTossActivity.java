@@ -21,7 +21,7 @@ public class CoinTossActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_coin_toss);
 
-        coinImage = findViewById(R.id.coin_image); // Make sure you have a coin ImageView in your layout
+        coinImage = findViewById(R.id.coin_image);
 
         Button headsButton = findViewById(R.id.button_heads);
         Button tailsButton = findViewById(R.id.button_tails);

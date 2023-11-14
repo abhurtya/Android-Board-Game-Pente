@@ -15,6 +15,8 @@ import android.widget.EditText;
 import android.text.InputType;
 import android.view.View;
 import java.io.File;
+import android.database.Cursor;
+import android.provider.OpenableColumns;
 import android.os.Handler;
 import android.widget.TextView;
 import android.os.Looper;
@@ -62,6 +64,9 @@ public class MainActivity extends AppCompatActivity implements BoardView.BoardVi
     private int roundNumber = 0;
 
     private Handler handler = new Handler();
+
+    //runnable help obtained from oracle docs
+    //https://docs.oracle.com/javase%2F7%2Fdocs%2Fapi%2F%2F/java/lang/Runnable.html
     private Runnable updateLogsRunnable = new Runnable() {
         @Override
         public void run() {
@@ -70,6 +75,8 @@ public class MainActivity extends AppCompatActivity implements BoardView.BoardVi
         }
     };
 
+    //startActivityForResult() has been deprecated so use new method instead of that.
+    //https://stackoverflow.com/questions/61455381/how-to-replace-startactivityforresult-with-activity-result-apis
     private ActivityResultLauncher<Intent> coinTossResultLauncher = registerForActivityResult(
             new ActivityResultContracts.StartActivityForResult(),
             new ActivityResultCallback<ActivityResult>() {
@@ -160,11 +167,14 @@ public class MainActivity extends AppCompatActivity implements BoardView.BoardVi
             String[] nextPlayer = new String[1];
             if (PenteFileReader.loadGameFromScanner(scanner, round.getBoard(), humanPlayer, computerPlayer, nextPlayer)) {
                 isHumanTurn = nextPlayer[0].equals("Human");
-                showTemporaryDialog("Game loaded from file.", 2);
+                char color = nextPlayer[0].equals("Human") ? humanPlayer.getSymbol() : computerPlayer.getSymbol();
+                String dialogMsg = "Game loaded from file.\n It is " + nextPlayer[0] + "'s turn playing color "+ color +".";;
+
+                showTemporaryDialog(dialogMsg, 1);
                 boardView.refreshBoard();
                 roundNumber++;
                 //log name of file in Logger
-                Logger.getInstance().addLog("Game loaded from file: " + uri.getLastPathSegment());
+                Logger.getInstance().addLog("Game loaded from file: " + getFileName(uri));
                 logRoundNumber(roundNumber);
                 setColorCode();
                 startGame();
@@ -176,6 +186,24 @@ public class MainActivity extends AppCompatActivity implements BoardView.BoardVi
             e.printStackTrace();
         }
     }
+
+    //cursor use help obtained from:
+//    https://stackoverflow.com/questions/5568874/how-to-extract-the-file-name-from-uri-returned-from-intent-action-get-content
+    private String getFileName(Uri uri) {
+        String displayName = "";
+        Cursor cursor = getContentResolver().query(uri, null, null, null, null);
+
+        try {
+            if (cursor != null && cursor.moveToFirst()) {
+                displayName = cursor.getString(cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME));
+            }
+        } finally {
+            cursor.close();
+        }
+
+        return displayName;
+    }
+
 
 
     private void startNewRound(){
@@ -254,7 +282,7 @@ public class MainActivity extends AppCompatActivity implements BoardView.BoardVi
         boolean captureMade = round.checkForCapture(symbol, player);
         if (captureMade) {
             String opponentPlayer = player.getPlayerType().equals("Human") ? "Computer" : "Human";
-            showTemporaryDialog(player.getPlayerType() + " captured" +opponentPlayer+  "'s pair!", 2);
+            showTemporaryDialog(player.getPlayerType() + " captured " +opponentPlayer+  "'s pair!", 2);
             updateCapturesDisplay();
         }
 
@@ -325,6 +353,8 @@ public class MainActivity extends AppCompatActivity implements BoardView.BoardVi
         updateTourScoreDisplay();
 
         // Delay starting PlayAgainActivity
+        //help obtained from
+        //https://stackoverflow.com/questions/3072173/how-to-call-a-method-after-a-delay-in-android
         new Handler(Looper.getMainLooper()).postDelayed(() -> {
                 Intent intent = new Intent(MainActivity.this, PlayAgainActivity.class);
             intent.putExtra("humanPoints", humanPlayer.getPoints());
@@ -407,8 +437,10 @@ public class MainActivity extends AppCompatActivity implements BoardView.BoardVi
         //if button help clicked get computer's strategy move and display it in temporary dialog
 
         Pair<Integer, Integer> suggestedMove= humanPlayer.strategy(round.getBoard(), humanPlayer.getSymbol(), false);
-        showTemporaryDialog("Suggested move: " + (char) (suggestedMove.getValue() + 'A') + (19 - suggestedMove.getKey()), 2);
-
+        if (suggestedMove != null) {
+            boardView.highlightCell(suggestedMove.getKey(), suggestedMove.getValue(), 2000);
+            showTemporaryDialog("Suggested move: " + (char) (suggestedMove.getValue() + 'A') + (19 - suggestedMove.getKey()), 2);
+        }
     }
 
 

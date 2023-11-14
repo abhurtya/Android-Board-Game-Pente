@@ -17,20 +17,6 @@ public class Pair<K, V> implements Serializable {
         this.second = second;
     }
 
-    /**
-     * Overriding the hashcode method from the Object Class.
-     * @return int, the hashcode for the object
-     */
-    @Override
-    public int hashCode() {
-        final int prime = 31;
-        int hash = 17;
-
-        hash = prime * hash + ((first == null) ? 0 : first.hashCode());
-        hash = prime * hash + ((second == null) ? 0 : second.hashCode());
-
-        return hash;
-    }
 
     /**
      * Overriding the equals method from the Object Class.

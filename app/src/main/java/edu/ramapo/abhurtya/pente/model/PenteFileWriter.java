@@ -1,39 +1,36 @@
 package edu.ramapo.abhurtya.pente.model;
 
-import java.io.FileWriter;
+import java.io.BufferedWriter;
 import java.io.IOException;
-import java.io.PrintWriter;
-
-import edu.ramapo.abhurtya.pente.utils.Logger;
 
 public class PenteFileWriter {
 
-    public static boolean saveGame(String filename, Board board, Player human, Player computer, String nextPlayer, char nextPlayerSymbol) {
-
-        try (PrintWriter outFile = new PrintWriter(new FileWriter(filename))) {
-            outFile.println("Board:");
+    public static boolean saveGame(BufferedWriter writer, Board board, Player human, Player computer, String nextPlayer, char nextPlayerSymbol) {
+        try {
+            writer.write("Board:\n");
             for (int i = 18; i >= 0; --i) {
                 for (int j = 0; j < 19; ++j) {
                     char cell = board.getCell(i, j);
-                    outFile.print(cell == '*' ? 'O' : cell);
+                    writer.write(cell == '*' ? 'O' : cell);
                 }
-                outFile.println();
+                writer.newLine();
             }
 
-            outFile.println("\nHuman:");
-            outFile.println("Captured pairs: " + human.getCaptures());
-            outFile.println("Score: " + human.getPoints());
+            writer.write("\nHuman:\n");
+            writer.write("Captured pairs: " + human.getCaptures() + "\n");
+            writer.write("Score: " + human.getPoints() + "\n");
 
-            outFile.println("\nComputer:");
-            outFile.println("Captured pairs: " + computer.getCaptures());
-            outFile.println("Score: " + computer.getPoints());
+            writer.write("\nComputer:\n");
+            writer.write("Captured pairs: " + computer.getCaptures() + "\n");
+            writer.write("Score: " + computer.getPoints() + "\n");
 
             String nextPlayerSymbolStr = nextPlayerSymbol == 'W' ? "White" : "Black";
-            outFile.println("\nNext Player: " + nextPlayer + " - " + nextPlayerSymbolStr);
+            writer.write("\nNext Player: " + nextPlayer + " - " + nextPlayerSymbolStr + "\n");
 
+            writer.flush();
             return true;
         } catch (IOException e) {
-            Logger.getInstance().addLog("Failed to open file for writing.");
+            e.printStackTrace();
             return false;
         }
     }

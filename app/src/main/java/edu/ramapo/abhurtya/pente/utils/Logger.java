@@ -13,6 +13,8 @@ public class Logger {
     }
 
     // Public method to get the instance
+//    only one thread can execute that method at a time for an instance of the class.
+//    https://www.baeldung.com/java-synchronized
     public static synchronized Logger getInstance() {
         if (instance == null) {
             instance = new Logger();

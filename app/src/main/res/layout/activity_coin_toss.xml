@@ -4,8 +4,17 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="16dp"
+
     tools:context=".CoinTossActivity">
+
+    <ImageView
+        android:id="@+id/background_image"
+        android:layout_width="473dp"
+        android:layout_height="862dp"
+        android:scaleType="centerCrop"
+        app:srcCompat="@drawable/mainmenu_background"
+        tools:layout_editor_absoluteX="-46dp"
+        tools:layout_editor_absoluteY="-66dp" />
 
     <ImageView
         android:id="@+id/coin_image"
@@ -32,39 +41,39 @@
         android:layout_width="266dp"
         android:layout_height="86dp"
         android:layout_marginStart="36dp"
-        android:layout_marginTop="396dp"
+        android:layout_marginTop="392dp"
         android:layout_marginEnd="26dp"
         android:fontFamily="@font/paprika"
         android:text="Choose Heads or Tails \n to Start the Game"
         android:textAppearance="@style/TextAppearance.AppCompat.Large"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.819"
+        app:layout_constraintHorizontal_bias="0.662"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <Button
         android:id="@+id/button_heads"
         style="@style/Widget.MaterialComponents.Button"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="148dp"
-        android:layout_marginEnd="8dp"
+        android:layout_width="128dp"
+        android:layout_height="58dp"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="168dp"
         android:padding="12dp"
         android:text="Heads"
-        app:layout_constraintEnd_toStartOf="@id/button_tails"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/guide_horizontal" />
+        app:layout_constraintTop_toTopOf="@+id/guide_horizontal" />
 
     <Button
         android:id="@+id/button_tails"
         style="@style/Widget.MaterialComponents.Button"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
+        android:layout_width="126dp"
+        android:layout_height="60dp"
         android:layout_marginStart="8dp"
-        android:layout_marginTop="148dp"
+        android:layout_marginTop="168dp"
         android:padding="12dp"
         android:text="Tails"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.568"
         app:layout_constraintStart_toEndOf="@id/button_heads"
         app:layout_constraintTop_toBottomOf="@id/guide_horizontal" />
 

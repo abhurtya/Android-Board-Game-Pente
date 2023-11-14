@@ -7,13 +7,24 @@
     android:layout_height="match_parent"
     android:gravity="center">
 
+
+    <ImageView
+        android:id="@+id/background_image"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scaleType="centerCrop"
+        android:visibility="visible"
+        app:srcCompat="@drawable/mainmenu_background"
+        tools:layout_editor_absoluteX="-31dp"
+        tools:layout_editor_absoluteY="-16dp" />
+
     <TextView
         android:id="@+id/textView_prompt"
         android:layout_width="181dp"
         android:layout_height="61dp"
-        android:layout_marginTop="228dp"
+        android:layout_marginTop="180dp"
         android:fontFamily="@font/paprika"
-        android:text="Welcome to the \n Game of Pente"
+        android:text="  \t    to the \n Game of Pente"
         android:textAppearance="@style/TextAppearance.AppCompat.Large"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -40,4 +51,43 @@
         app:layout_constraintEnd_toEndOf="@+id/button_start_new_game"
         app:layout_constraintStart_toStartOf="@+id/button_start_new_game"
         app:layout_constraintTop_toBottomOf="@+id/button_start_new_game" />
+
+    <TextView
+        android:layout_width="301dp"
+        android:layout_height="123dp"
+        android:layout_marginTop="52dp"
+        android:fontFamily="@font/akronim"
+        android:text="Welcome"
+        android:textSize="96sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/background_image" />
+
+    <TextView
+        android:id="@+id/textView3"
+        android:layout_width="152dp"
+        android:layout_height="46dp"
+        android:layout_marginBottom="16dp"
+        android:fontFamily="cursive"
+        android:text="Anish Bhurtyal"
+        android:textColor="#F2F1F4"
+        android:textSize="24sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <TextView
+        android:id="@+id/textView2"
+        android:layout_width="288dp"
+        android:layout_height="61dp"
+        android:layout_marginTop="128dp"
+        android:fontFamily="@font/paprika"
+        android:text="Let the fun begin!"
+        android:textSize="24sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.619"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/button_load_game" />
+
+
 </androidx.constraintlayout.widget.ConstraintLayout>

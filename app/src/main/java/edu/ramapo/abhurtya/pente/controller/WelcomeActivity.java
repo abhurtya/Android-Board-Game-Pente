@@ -7,8 +7,16 @@ import android.widget.Button;
 import androidx.appcompat.app.AppCompatActivity;
 import edu.ramapo.abhurtya.pente.R;
 
+/**
+ * Activity to handle the welcome screen.
+ * This activity allows the user to start a new game or load a saved game.
+ */
 public class WelcomeActivity extends AppCompatActivity {
 
+    /**
+     * Initializes the WelcomeActivity and sets up the UI components.
+     * @param savedInstanceState If the activity is being re-initialized after being shut down, this Bundle contains the data most recently supplied in onSaveInstanceState(Bundle).
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

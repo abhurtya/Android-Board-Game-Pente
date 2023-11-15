@@ -6,16 +6,29 @@ import java.util.Scanner;
 
 import edu.ramapo.abhurtya.pente.utils.Logger;
 
+/**
+ * Reads a Pente game file and loads the game state into the board and players.
+ */
+
 public class PenteFileReader  {
 
+    /**
+     * Loads a Pente game from a file.
+     * @param scanner The scanner to read the game data.
+     * @param board The board object to be updated with the file data.
+     * @param human The human player object to be updated with file data.
+     * @param computer The computer player object to be updated with file data.
+     * @param nextPlayer An array to store the next player's type.
+     * @return true if the game loads successfully, false otherwise.
+     */
     public static boolean loadGameFromScanner(Scanner scanner, Board board, Player human, Player computer, String[] nextPlayer) {
 
         try {
             // Skip the "Board:" line
             scanner.nextLine();
 
-            for (int i = 18; i >= 0; --i) {
-                String line = scanner.nextLine();
+            for (int i = 0; i < 19; ++i) {
+                String line = scanner.nextLine(); // Read the next line from the file
                 for (int j = 0; j < 19; ++j) {
                     if (line.charAt(j) == 'O') {
                         board.setCell(i, j, '*');
@@ -23,6 +36,7 @@ public class PenteFileReader  {
                         board.setCell(i, j, line.charAt(j));
                     }
                 }
+                System.out.println(); // Move to the next line after processing each row
             }
 
             // Skip to "Human:" line

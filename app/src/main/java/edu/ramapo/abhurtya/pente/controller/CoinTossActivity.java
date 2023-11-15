@@ -12,10 +12,18 @@ import android.os.Handler;
 
 import edu.ramapo.abhurtya.pente.R;
 
+/**
+ * Activity to handle the coin toss process at the beginning of the game.
+ * This activity allows the user to choose heads or tails and shows the result of the coin toss.
+ */
 public class CoinTossActivity extends AppCompatActivity {
 
     private ImageView coinImage;
 
+    /**
+     * Initializes the CoinTossActivity and sets up the UI components.
+     * @param savedInstanceState If the activity is being re-initialized after being shut down, this Bundle contains the data most recently supplied in onSaveInstanceState(Bundle).
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -30,6 +38,11 @@ public class CoinTossActivity extends AppCompatActivity {
         tailsButton.setOnClickListener(v -> onCoinTossChoice(2)); // 2 for tails
     }
 
+    /**
+     * Handles the coin toss choice made by the user.
+     * Initiates the coin animation and determines the result of the toss.
+     * @param choice The user's choice: 1 for heads, 2 for tails.
+     */
     private void onCoinTossChoice(int choice) {
         animateCoin(new AnimatorListenerAdapter() {
             @Override
@@ -47,26 +60,25 @@ public class CoinTossActivity extends AppCompatActivity {
 
                 // Start the game after the dialog has been dismissed
                 new Handler().postDelayed(() -> {
-//                    Intent startGameIntent = new Intent(CoinTossActivity.this, MainActivity.class);
-//                    startGameIntent.putExtra("firstPlayerSymbol", isHumanStarting ? 'H' : 'C');
-//                    startActivity(startGameIntent);
-//                    finish();
 
                     Intent resultIntent = new Intent();
                     resultIntent.putExtra("firstPlayerSymbol", isHumanStarting ? 'H' : 'C');
                     setResult(RESULT_OK, resultIntent);  // Set the result with the chosen symbol
                     finish();
 
-                }, 3000); // Adjust this value to control how long the dialog is shown
+                }, 3000);
             }
         });
     }
 
-
+    /**
+     * Animates the coin image with a flipping effect.
+     * @param animatorListener Listener to handle the completion of the animation.
+     */
     private void animateCoin(Animator.AnimatorListener animatorListener) {
-        // This example flips the coin around the Y axis 3 times
+        // flips the coin around the Y axis 3 times
         ObjectAnimator flip = ObjectAnimator.ofFloat(coinImage, "rotationY", 0f, 1080f);
-        flip.setDuration(3000); // animation duration in milliseconds
+        flip.setDuration(3000); // milliseconds
         flip.addListener(animatorListener); // add listener to handle animation end
         flip.start();
     }

@@ -6,12 +6,20 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.widget.Button;
 import edu.ramapo.abhurtya.pente.R;
 
+/**
+ * Activity to show the summary of the tournament.
+ * This activity shows the points earned by the human and computer players.
+ */
 public class ShowTournamentSummaryActivity extends AppCompatActivity {
 
     private TextView humanTournamentPointsTextView;
     private TextView computerTournamentPointsTextView;
 
     private TextView wonTournamentTextView;
+    /**
+     * Initializes the ShowTournamentSummaryActivity and sets up the UI components.
+     * @param savedInstanceState If the activity is being re-initialized after being shut down, this Bundle contains the data most recently supplied in onSaveInstanceState(Bundle).
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

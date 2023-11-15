@@ -19,11 +19,20 @@ import java.io.BufferedWriter;
 import java.io.OutputStreamWriter;
 import android.os.Environment;
 
+/**
+ * Activity to handle the saving of the game.
+ * This activity allows the user to enter a filename and save the game to a text file.
+ */
+
 public class SaveGameActivity extends AppCompatActivity {
 
     private EditText filenameEditText;
     private Button saveButton;
 
+    /**
+     * Initializes the SaveGameActivity and sets up the UI components.
+     * @param savedInstanceState If the activity is being re-initialized after being shut down, this Bundle contains the data most recently supplied in onSaveInstanceState(Bundle).
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -40,6 +49,12 @@ public class SaveGameActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * Saves the game to a text file.
+     * The filename is taken from the filenameEditText.
+     * If the filename does not end with .txt, it is appended to the filename.
+     * The game is saved to the Downloads folder.
+     */
     private void saveGame() {
         String filename = filenameEditText.getText().toString();
         if (filename.isEmpty()) {

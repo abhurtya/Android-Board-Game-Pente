@@ -40,6 +40,11 @@ import edu.ramapo.abhurtya.pente.model.PenteFileWriter;
 import edu.ramapo.abhurtya.pente.utils.Logger;
 import android.util.Log;
 
+/**
+ * Main activity of the Pente game. Handles the game logic,
+ * user interactions, and updating the UI.
+ */
+
 public class MainActivity extends AppCompatActivity implements BoardView.BoardViewListener {
 
     private Round round;
@@ -112,6 +117,10 @@ public class MainActivity extends AppCompatActivity implements BoardView.BoardVi
             });
 
 
+    /**
+     * Initializes the MainActivity, sets up the game board and handles the loading of a game.
+     * @param savedInstanceState If the activity is being re-initialized, this Bundle contains the data most recently supplied in onSaveInstanceState(Bundle).
+     */
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -152,6 +161,9 @@ public class MainActivity extends AppCompatActivity implements BoardView.BoardVi
         handler.post(updateLogsRunnable);
     }
 
+    /**
+     * Launches the file picker to select a game file.
+     */
     private void launchFilePicker() {
         Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
         intent.addCategory(Intent.CATEGORY_OPENABLE);
@@ -159,6 +171,11 @@ public class MainActivity extends AppCompatActivity implements BoardView.BoardVi
         intent.setType("text/plain");
         filePickerLauncher.launch(intent);
     }
+
+    /**
+     * Loads the game state from a selected file.
+     * @param uri The URI of the file to load the game from.
+     */
 
     private void loadGameFromFile(Uri uri) {
         try (InputStream inputStream = getContentResolver().openInputStream(uri);
@@ -170,7 +187,7 @@ public class MainActivity extends AppCompatActivity implements BoardView.BoardVi
                 char color = nextPlayer[0].equals("Human") ? humanPlayer.getSymbol() : computerPlayer.getSymbol();
                 String dialogMsg = "Game loaded from file.\n It is " + nextPlayer[0] + "'s turn playing color "+ color +".";;
 
-                showTemporaryDialog(dialogMsg, 1);
+                showTemporaryDialog(dialogMsg, 2);
                 boardView.refreshBoard();
                 roundNumber++;
                 //log name of file in Logger
@@ -187,10 +204,17 @@ public class MainActivity extends AppCompatActivity implements BoardView.BoardVi
         }
     }
 
-    //cursor use help obtained from:
-//    https://stackoverflow.com/questions/5568874/how-to-extract-the-file-name-from-uri-returned-from-intent-action-get-content
+    /**
+     * Retrieves the file name from the given URI.
+     * @param uri The URI of the file.
+     * @return The display name of the file.
+     */
+
     private String getFileName(Uri uri) {
         String displayName = "";
+        //cursor use help obtained from:
+        //    https://stackoverflow.com/questions/5568874/how-to-extract-the-file-name-from-uri-returned-from-intent-action-get-content
+
         Cursor cursor = getContentResolver().query(uri, null, null, null, null);
 
         try {
@@ -205,7 +229,10 @@ public class MainActivity extends AppCompatActivity implements BoardView.BoardVi
     }
 
 
-
+    /**
+     * Starts a new round in the game.
+     * This method is responsible for initializing or resetting the game state for a new round and deciding who starts the round.
+     */
     private void startNewRound(){
         roundNumber++;
         logRoundNumber(roundNumber);
@@ -235,12 +262,19 @@ public class MainActivity extends AppCompatActivity implements BoardView.BoardVi
         }
     }
 
+    /**
+     * Logs the number of the current round. This is used for display and logging purposes to indicate the start of a new round.
+     * @param roundNumber The number of the current round.
+     */
     private void logRoundNumber(int roundNumber) {
         Logger.getInstance().addLog("----------------------------------------------------");
         Logger.getInstance().addLog("Round " + roundNumber + " started.");
         Logger.getInstance().addLog("----------------------------------------------------");
     }
 
+    /**
+     * Sets the symbols for the human and computer players. This is based on who is starting the round or the result of a coin toss.
+     */
     private void setPlayerSymbols() {
         if (isHumanTurn) {
             humanPlayer.setSymbol('W');
@@ -253,6 +287,9 @@ public class MainActivity extends AppCompatActivity implements BoardView.BoardVi
         setColorCode();
     }
 
+    /**
+     * Sets the color code on screen for the human and computer players.
+     */
     private void setColorCode(){
         colorCodeTextView = findViewById(R.id.colorCodeTextView);
         char humanColor = humanPlayer.getSymbol() == 'W' ? '⚪' : '⚫';
@@ -261,6 +298,10 @@ public class MainActivity extends AppCompatActivity implements BoardView.BoardVi
         colorCodeTextView.setText("   Human: " + humanColor + ", Computer: " + computerColor + "   ");
     }
 
+    /**
+     * Starts the game by making the first move.
+     */
+
     private void startGame() {
 
         if (!isHumanTurn) {
@@ -268,11 +309,20 @@ public class MainActivity extends AppCompatActivity implements BoardView.BoardVi
         }
     }
 
+    /**
+     * Makes a move for the computer player.
+     */
     private void makeComputerMove() {
         computerPlayer.play(round.getBoard(), computerPlayer.getSymbol());
 
         updateGameState(computerPlayer, computerPlayer.getSymbol());
     }
+
+    /**
+     * Updates the game state after a move is made by a player.
+     * @param player The player who made the move.
+     * @param symbol The symbol of the player who made the move.
+     */
 
     private void updateGameState(Player player, char symbol) {
         // Update the board
@@ -304,12 +354,18 @@ public class MainActivity extends AppCompatActivity implements BoardView.BoardVi
         swapTurns();
     }
 
+    /**
+     * Updates the captures display on screen.
+     */
     private void updateCapturesDisplay() {
         humanCapturesTextView.setText("Human:" + String.valueOf(humanPlayer.getCaptures()) + " captures");
         computerCapturesTextView.setText("Computer:" + String.valueOf(computerPlayer.getCaptures()) + " captures");
 
     }
 
+    /**
+     * Swaps the turns between the human and computer players.
+     */
     private void swapTurns() {
         isHumanTurn = !isHumanTurn;
 
@@ -319,6 +375,8 @@ public class MainActivity extends AppCompatActivity implements BoardView.BoardVi
         }
     }
 
+    //startActivityForResult() has been deprecated so use new method instead of that.
+    //https://stackoverflow.com/questions/61455381/how-to-replace-startactivityforresult-with-activity-result-apis
     private ActivityResultLauncher<Intent> playAgainLauncher = registerForActivityResult(
             new ActivityResultContracts.StartActivityForResult(),
             new ActivityResultCallback<ActivityResult>() {
@@ -342,6 +400,9 @@ public class MainActivity extends AppCompatActivity implements BoardView.BoardVi
                 }
             });
 
+    /**
+     * Finishes the game and starts the PlayAgainActivity.
+     */
     private void finishGame() {
 
         round.calculateScore(humanPlayer.getSymbol(), humanPlayer);
@@ -365,12 +426,21 @@ public class MainActivity extends AppCompatActivity implements BoardView.BoardVi
 
     }
 
+    /**
+     * Updates the tournament score display on screen.
+     */
     private void updateTourScoreDisplay() {
         humanTourScoreTextView.setText("Human: " + String.valueOf(humanTournamentScore) + " points");
         computerTourScoreTextView.setText("Computer: " + String.valueOf(computerTournamentScore) + " points");
     }
 
 
+    /**
+     * Called when a cell on the board is clicked.
+     * Handles the human player's move and updates the game state.
+     * @param row The row index of the clicked cell.
+     * @param col The column index of the clicked cell.
+     */
 
     // Implement the onCellClicked method from the BoardViewListener interface
     @Override
@@ -390,6 +460,9 @@ public class MainActivity extends AppCompatActivity implements BoardView.BoardVi
         }
     }
 
+    /**
+     * Overrides the default back button behavior to prevent going back to the coin toss.
+     */
     @Override
     public void onBackPressed() {
         // Prevent going back to the coin toss
@@ -397,6 +470,11 @@ public class MainActivity extends AppCompatActivity implements BoardView.BoardVi
         moveTaskToBack(true);
     }
 
+    /**
+     * Shows a temporary dialog on screen for the specified number of seconds.
+     * @param message The message to display in the dialog.
+     * @param seconds The number of seconds to show the dialog.
+     */
     private void showTemporaryDialog(String message, int seconds) {
         AlertDialog dialog = new AlertDialog.Builder(this)
                 .setMessage(message)
@@ -417,10 +495,17 @@ public class MainActivity extends AppCompatActivity implements BoardView.BoardVi
         }, seconds * 1000); //  milliseconds
     }
 
+    /**
+     * Updates the log display of gameplay on screen.
+     */
     private void updateLogDisplay() {
         String logs = Logger.getInstance().showLogs();
         logTextView.setText(logs);
     }
+
+    /**
+     * Event handler for the save button click. Launches the SaveGameActivity.
+     */
 
 //    https://stackoverflow.com/questions/768969/passing-a-bundle-on-startactivity
     public void onSaveButtonClicked() {
@@ -433,6 +518,9 @@ public class MainActivity extends AppCompatActivity implements BoardView.BoardVi
         startActivity(intent);
     }
 
+    /**
+     * Event handler for the help button click. Displays the suggested move.
+     */
     public void onButtonHelpClicked() {
         //if button help clicked get computer's strategy move and display it in temporary dialog
 
@@ -444,6 +532,9 @@ public class MainActivity extends AppCompatActivity implements BoardView.BoardVi
     }
 
 
+    /**
+     * Cleans up resources when the activity is destroyed.
+     */
     @Override
     protected void onDestroy() {
         super.onDestroy();

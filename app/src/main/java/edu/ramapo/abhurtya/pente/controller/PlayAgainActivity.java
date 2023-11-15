@@ -10,15 +10,23 @@ import android.widget.TextView;
 
 import edu.ramapo.abhurtya.pente.R;
 
+/**
+ * Activity to handle the coin toss process at the beginning of the game.
+ * This activity allows the user to choose heads or tails and shows the result of the coin toss.
+ */
 
 public class PlayAgainActivity extends AppCompatActivity {
 
+    /**
+     * Initializes the CoinTossActivity and sets up the UI components.
+     * @param savedInstanceState If the activity is being re-initialized after being shut down, this Bundle contains the data most recently supplied in onSaveInstanceState(Bundle).
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        // Set the content view to your custom layout
         setContentView(R.layout.activity_play_again);
 
+        // Retrieve points from the intent that started this activity
         int humanPoints = getIntent().getIntExtra("humanPoints", 0);
         int computerPoints = getIntent().getIntExtra("computerPoints", 0);
 

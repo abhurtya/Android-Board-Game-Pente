@@ -11,11 +11,23 @@ import edu.ramapo.abhurtya.pente.model.Board;
 import android.graphics.drawable.Drawable;
 import android.os.Handler;
 
+/**
+ * Handles the visual representation of the Pente game board in the user interface.
+ * This class is responsible for creating and updating the board view and handling user interactions with the board.
+ */
+
 public class BoardView {
 
     private GridLayout gridLayout;
     private Context context;
     private Board board;
+
+    /**
+     * Constructs a new BoardView with the given parameters.
+     * @param gridLayout The GridLayout that will represent the game board.
+     * @param context The context of the application, used for creating views
+     * @param board The game board model.
+     */
 
     public BoardView(GridLayout gridLayout, Context context, Board board) {
         this.gridLayout = gridLayout;
@@ -26,7 +38,17 @@ public class BoardView {
         this.gridLayout.setRowCount(20);
     }
 
+
+
+    // Listener to handle board interaction events
     private BoardViewListener listener;
+
+    /**
+     * The listener interface provides a way for BoardView to communicate with MainActivity
+     * without needing to know the details of the latter(without direct couplin). When an event i.e. a cell click happens,
+     * BoardView simply calls the listener's method (i.e. onCellClicked),
+     *  and MainActivity takes the necessary action
+     */
     public interface BoardViewListener {
         void onCellClicked(int row, int col);
     }
@@ -36,10 +58,13 @@ public class BoardView {
 
     private void notifyCellClicked(int row, int col) {
         if (listener != null) {
-            listener.onCellClicked(row, col);
+            listener.onCellClicked(row, col); // Notify the listener (MainActivity) of the cell click
         }
     }
 
+    /**
+     * Creates the initial visual representation of the game board.This includes setting up individual cells and their initial states.
+     */
     public void createBoard() {
         for (int row = 0; row < 20; row++) {
             for (int col = 0; col < 20; col++) {
@@ -49,18 +74,24 @@ public class BoardView {
         }
     }
 
+    /**
+     * Creates a single cell in the game board.
+     * @param row The row index of the cell to be created.
+     * @param col The column of the cell to be created.
+     * @return The created view representing the cell
+     */
     private View createCell(int row, int col) {
         TextView view;
         if (row == 0 && col == 0) {
-            // This is the top-left corner, leave it blank or add some other view if necessary
+            // This is the top-left corner, leave it blank
             view = new TextView(context);
         } else if (row == 0) {
-            // This is the first row which will contain column labels
+            // first row: column labels
             TextView label = new TextView(context);
             label.setText(String.valueOf((char)('A' + col - 1)));
             view = label;
         } else if (col == 0) {
-            // This is the first column which will contain row labels
+            // first column :row labels
             TextView label = new TextView(context);
             label.setText(String.valueOf(20 - row)); // 20 - row, because we are labeling from 19 to 1
             view = label;
@@ -71,10 +102,10 @@ public class BoardView {
             // Set cell background based on the current state
             char state = board.getCell(row - 1, col - 1);
             switch (state) {
-                case 'W': // white stone
+                case 'W': // white
                     cell.setBackgroundResource(R.drawable.white_stone);
                     break;
-                case 'B': // a black stone
+                case 'B': //  black
                     cell.setBackgroundResource(R.drawable.black_stone);
                     break;
                 default: // If the cell is empty
@@ -83,13 +114,14 @@ public class BoardView {
             }
 
             cell.setTag(new CellTag(row - 1, col - 1));
-            // Add click listeners and other cell properties
+            // Add click listeners to the cell
             cell.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     CellTag tag = (CellTag) v.getTag();
 
                     if (tag != null) {
+                        //Notify listener(MainActivity) of the cell click
                         notifyCellClicked(tag.row, tag.col);
                     } else {
                         // Handle the case where tag is null if necessary
@@ -100,11 +132,16 @@ public class BoardView {
             });
             view = cell;
         }
-        // Return the created view
         return view;
     }
 
-    public void updateCell(int row, int col, char player) {
+    /**
+     * Updates the visual representation of a single cell on the game board.
+     * @param row The row index of the cell to be updated.
+     * @param col The column index of the cell to be updated.
+     * @param state The cell state 'W' for white, 'B' for black, '*' for empty.
+     */
+    public void updateCell(int row, int col, char state) {
         // Since the board is actually 19x19 and the labels are on the first row and column,
         // we need to add 1 to both row and col to get the correct position in the GridLayout
         int actualRow = row + 1;
@@ -119,8 +156,8 @@ public class BoardView {
         // Check if the view is an instance of TextView before casting
         if (view instanceof TextView) {
             TextView cellView = (TextView) view;
-            // Update the background of the cell based on the player
-            switch (player) {
+            // Update the background of the cell based on the color
+            switch (state) {
                 case 'W':
                     cellView.setBackgroundResource(R.drawable.white_stone); // Drawable resource for white stone
                     break;
@@ -134,6 +171,9 @@ public class BoardView {
         }
     }
 
+    /**
+     * Refreshes the entire board view based on the current state of the game board model.
+     */
     public void refreshBoard() {
 
         for (int row = 0; row < 19; row++) {
@@ -143,6 +183,13 @@ public class BoardView {
             }
         }
     }
+
+    /**
+     * Highlights the given cell on the board view.
+     * @param row The row index of the cell to be highlighted.
+     * @param col The column index of the cell to be highlighted.
+     * @param duration The duration of the highlight in milliseconds.
+     */
 
     public void highlightCell(int row, int col, int duration) {
         int actualRow = row + 1;
@@ -156,8 +203,10 @@ public class BoardView {
         }
     }
 
-
-    // Helper class to store coordinates in the tag
+    /**
+     * Helper class to store the row and column information as a tag in the cell view.
+     * This allows for easy identification of which cell was clicked.
+     */
     private class CellTag {
         public final int row;
         public final int col;
